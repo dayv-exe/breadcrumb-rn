@@ -1,17 +1,21 @@
 import { Colors } from "@/constants/Colors";
+import { useThemeColor } from "@/hooks/useThemeColor";
 import { DimensionValue, StyleSheet, Text, TextStyle, TouchableOpacity, ViewStyle } from "react-native";
 
-type buttonTypes = "prominent" | "faded" | "text"
+type buttonTypes = "prominent" | "faded" | textBtnTypes
+type textBtnTypes = "text" | "vibrant-text" | "forced-white"
 
 type bProps = {
   labelText?: string
   type?: buttonTypes
   width?: DimensionValue
+  handleClick?: () => void
+  textBtnType?: textBtnTypes
 }
 
-function ProminentButton({ labelText, width }: bProps) {
+function ProminentButton({ labelText, width, handleClick }: bProps) {
   return (
-    <TouchableOpacity style={[
+    <TouchableOpacity onPress={handleClick} style={[
       styles.prominent,
       { width: width }
     ]}>
@@ -20,9 +24,9 @@ function ProminentButton({ labelText, width }: bProps) {
   )
 }
 
-function FadedButton({ labelText, width }: bProps) {
+function FadedButton({ labelText, width, handleClick }: bProps) {
   return (
-    <TouchableOpacity style={styles.faded}>
+    <TouchableOpacity onPress={handleClick} style={styles.faded}>
       <Text style={[
         styles.labelText,
         { width: width }
@@ -31,26 +35,36 @@ function FadedButton({ labelText, width }: bProps) {
   )
 }
 
-function TextButton({ labelText }: bProps) {
+function TextButton({ labelText, handleClick, textBtnType }: bProps) {
+  const theme = useThemeColor
+
   return (
-    <TouchableOpacity style={styles.text}>
-      <Text style={styles.textBtnLabelText}>{labelText}</Text>
+    <TouchableOpacity onPress={handleClick} style={styles.text}>
+      <Text style={[
+        styles.textBtnLabelText,
+        {
+          color:
+            textBtnType === "text" ? theme({}, "text") :
+              textBtnType === "vibrant-text" ? styles.textBtnLabelText.color :
+                styles.labelText.color
+        }
+      ]}>{labelText}</Text>
     </TouchableOpacity>
   )
 }
 
-export default function CustomButton({ labelText = "button", type = "text", width = "auto" }: bProps) {
+export default function CustomButton({ labelText = "button", type = "text", width = "auto", handleClick = () => { } }: bProps) {
   if (type === "prominent") {
     return (
-      <ProminentButton labelText={labelText} width={width} />
+      <ProminentButton labelText={labelText} width={width} handleClick={handleClick} />
     )
   } else if (type === "faded") {
     return (
-      <FadedButton labelText={labelText} width={width} />
+      <FadedButton labelText={labelText} width={width} handleClick={handleClick} />
     )
   } else {
     return (
-      <TextButton labelText={labelText} />
+      <TextButton labelText={labelText} handleClick={handleClick} textBtnType={type} />
     )
   }
 }
@@ -72,7 +86,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.vibrantButton,
   },
   faded: {
-    backgroundColor: "rgba(255, 255, 255, .2)",
+    backgroundColor: "rgba(255, 255, 255, .1)",
     ...baseButton
   },
   text: {
