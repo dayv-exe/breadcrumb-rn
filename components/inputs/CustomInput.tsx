@@ -5,13 +5,13 @@ import { StyleSheet, Text, TextInput, View } from "react-native";
 type iProps = {
   labelText?: string
   value: string
-  setValue: (e: string) => void
+  setValue?: (e: string) => void
   infoText?: string
   showInfoTextOnFocus?: boolean
   isPassword?: boolean
 }
 
-export default function CustomInput({ value, setValue, labelText = "Label:", infoText = "Info text", showInfoTextOnFocus = false, isPassword = false }: iProps) {
+export default function CustomInput({ value, setValue, labelText = "Label:", infoText = "", showInfoTextOnFocus = false, isPassword = false }: iProps) {
   const [focused, setFocused] = useState(false)
 
   const handleFocus = () => setFocused(true)
@@ -22,12 +22,12 @@ export default function CustomInput({ value, setValue, labelText = "Label:", inf
       <Text style={styles.labelText}>
         {labelText}
       </Text>
-      <TextInput secureTextEntry={isPassword} onFocus={handleFocus} onBlur={handleBlur} style={[
+      <TextInput readOnly={setValue == null} secureTextEntry={isPassword} onFocus={handleFocus} onBlur={handleBlur} style={[
         styles.input,
         { borderColor: focused ? Colors.light.vibrantButton : "transparent" }
       ]}
         value={value}
-        onChangeText={e => setValue(e)} />
+        onChangeText={setValue ? e => setValue(e) : _ => { }} />
 
       {showInfoTextOnFocus && <Text style={styles.infoText}>
         {showInfoTextOnFocus && focused ? infoText : ""}
@@ -56,11 +56,12 @@ const styles = StyleSheet.create({
     width: "100%",
     color: "#fff",
     padding: 5,
-    fontWeight: "700",
+    fontWeight: "600",
   },
   infoText: {
     width: "100%",
     color: "#fff",
     padding: 5,
+    opacity: .7
   }
 })
