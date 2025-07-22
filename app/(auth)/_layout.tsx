@@ -12,7 +12,7 @@ export default function AuthLayout() {
     }}>
       <Stack.Screen name="index" options={{ title: "" }} />
       <Stack.Screen name="signup-name" options={{ title: "Name" }} />
-      <Stack.Screen name="signup-birthdate" options={{ title: "Birthdate" }} />
+      <Stack.Screen name="signup-birthdate" options={{ title: "Age" }} />
       <Stack.Screen name="signup-login-details" options={{ title: "Login details" }} />
       <Stack.Screen name="signup-verify" options={{ title: "Verify" }} />
       <Stack.Screen name="login" options={{ title: "Login" }} />

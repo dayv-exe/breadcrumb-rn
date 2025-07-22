@@ -11,7 +11,7 @@ type lProps = {
   adaptToTheme?: boolean
 }
 
-export default function CustomLabel({ labelText = "Label", textAlign = "left", adaptToTheme = false, bold = false, fade=true }: lProps) {
+export default function CustomLabel({ labelText = "Label", textAlign = "left", adaptToTheme = false, bold = false, fade=false }: lProps) {
   const theme = useThemeColor
   return (
     <Text style={[
@@ -29,6 +29,7 @@ export default function CustomLabel({ labelText = "Label", textAlign = "left", a
 const baseLabel: TextStyle = {
   width: "100%",
   padding: 5,
+  fontSize: 16
 }
 
 const styles = StyleSheet.create({

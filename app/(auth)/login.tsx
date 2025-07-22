@@ -1,3 +1,4 @@
+import { loginDetails } from "@/api/models/userDetails";
 import CustomButton from "@/components/buttons/CustomButton";
 import CustomInput from "@/components/inputs/CustomInput";
 import Spacer from "@/components/Spacer";
@@ -6,18 +7,20 @@ import { useState } from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from "react-native";
 
 export default function LoginScreen() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [loginDetails, setLoginDetails] = useState<loginDetails>({
+    email: "",
+    password: ""
+  })
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? 'padding' : "height"}
       keyboardVerticalOffset={100}>
       <ScrollView style={{ width: "100%" }} contentContainerStyle={styles.scroll}>
         <Spacer />
-        <CustomInput value={email} setValue={setEmail} labelText="Email:" infoText="" />
+        <CustomInput keyboardType="email-address" value={loginDetails.email} setValue={e => setLoginDetails({...loginDetails, email: e})} labelText="Email:" infoText="" />
         <Spacer size="small" />
-        <CustomInput value={password} setValue={setPassword} isPassword labelText="Password:" infoText="" />
-        <Spacer />
+        <CustomInput value={loginDetails.password} setValue={e => setLoginDetails({...loginDetails, password: e})} isPassword labelText="Password:" infoText="" />
+        <CustomButton labelText="forgot password?" type="text" />
       </ScrollView>
 
       <View style={styles.buttonView}>

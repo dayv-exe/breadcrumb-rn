@@ -46,9 +46,7 @@ export default function BirthdateScreen() {
       </ScrollView>
 
       <View style={styles.buttonView}>
-        <CustomButton type="prominent" labelText="Next" handleClick={() => {
-          router.push("/signup-login-details")
-        }} />
+        <CustomButton type="prominent" labelText="Next" />
         <Spacer />
         <Spacer />
       </View>
