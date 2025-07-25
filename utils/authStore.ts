@@ -68,8 +68,7 @@ export const useAuthStore = create(
           options: {
             userAttributes: {
               nickname: userDetails.username,
-              // name: userDetails.fullname,
-              "custom:fullname": userDetails.fullname, // to allow things like emojis
+              name: userDetails.fullname,
               birthdate: userDetails.birthdate,
             }
           }
