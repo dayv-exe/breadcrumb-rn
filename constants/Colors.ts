@@ -11,6 +11,8 @@ export const Colors = {
     tabIconSelected: tintColorLight,
     vibrantBackground: tintColorLight,
     vibrantButton: "#7070FF",
+    fadedBackground: "rgba(0, 0, 0, .1)",
+    backgroundOverlay: 'rgba(0,0,0,0.7)'
   },
   dark: {
     text: '#ECEDEE',
@@ -21,5 +23,7 @@ export const Colors = {
     tabIconSelected: tintColorDark,
     vibrantBackground: tintColorLight,
     vibrantButton: "#7070FF",
+    fadedBackground: "rgba(255, 255, 255, .1)",
+    backgroundOverlay: 'rgba(0,0,0,0.7)'
   },
 };

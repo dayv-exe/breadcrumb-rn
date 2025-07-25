@@ -1,14 +1,15 @@
 import CustomButton from "@/components/buttons/CustomButton";
 import Spacer from "@/components/Spacer";
+import CustomView from "@/components/views/CustomView";
 import { Colors } from "@/constants/Colors";
 import { useRouter } from "expo-router";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text } from "react-native";
 
 export default function AuthChoiceScreen() {
   const router = useRouter()
 
   return (
-    <View style={styles.container}>
+    <CustomView backgroundColor={Colors.light.vibrantBackground}>
       <Spacer />
       <Spacer />
       <Image style={styles.image} source={require("../../assets/images/bread-no-bg.png")} />
@@ -22,18 +23,11 @@ export default function AuthChoiceScreen() {
       <CustomButton handleClick={() => {
         router.push("/signup-name")
       }} labelText="Register" type="faded" />
-    </View>
+    </CustomView>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: Colors.light.vibrantBackground,
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "flex-start",
-  },
-
   image: {
     width: 100,
     height: 100,

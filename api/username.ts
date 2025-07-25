@@ -1,14 +1,19 @@
+import { validateUsername } from '@/constants/regexes';
+import axios from 'axios';
 import axiosInstance from '../constants/axios';
 
-const usernameRegex = /^[a-zA-Z0-9._]+$/
+export const checkUsernameAvailability = async (username: string): Promise<{ isValid: boolean, reason: string }> => {
+  const validation = validateUsername(username)
+  if (!validation.isValid) {
+    return { isValid: false, reason: validation.reason }
+  }
 
-export const checkUsernameAvailability = async (username: string): Promise<boolean> => {
   try {
-    if (username.length < 3 || !usernameRegex.test(username)) return false
-    const { data } = await axiosInstance.get(`/nickname_available/${username}`);
-    return data.message;
+    const { data } = await axiosInstance.get<{message: string}>(`/nickname_available/${username}`);
+    const verdict = data.message.toLowerCase() === "true"
+    return { isValid: verdict, reason: verdict ? "" : `${username} is already in use`};
   } catch (error) {
-    console.log(error)
-    return false
+    console.log(axios.isAxiosError(error) ? error.response?.data : "unknown error")
+    return { isValid: false, reason: "something went wrong, try again." }
   }
 };

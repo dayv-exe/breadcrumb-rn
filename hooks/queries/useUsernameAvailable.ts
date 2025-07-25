@@ -5,7 +5,7 @@ export const useUsernameAvailableOnInputChange = (username: string) => useQuery(
   queryKey: ['usernameAvailable', username],
   queryFn: () => checkUsernameAvailability(username),
   enabled: !!username,
-  staleTime: 240 * 1000 // 4 mins
+  staleTime: 1 * 1000 // 4 mins
 })
 
 export const useUsernameAvailableOnSubmit = () => useMutation({

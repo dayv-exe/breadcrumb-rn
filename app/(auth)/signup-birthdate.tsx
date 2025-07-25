@@ -1,78 +1,122 @@
+import { signupDetails } from "@/api/models/userDetails";
 import CustomButton from "@/components/buttons/CustomButton";
 import CustomLabel from "@/components/CustomLabel";
+import CustomModal from "@/components/modals/CustomModal";
 import Spacer from "@/components/Spacer";
+import CustomScrollView from "@/components/views/CustomScrollView";
+import CustomView from "@/components/views/CustomView";
 import { Colors } from "@/constants/Colors";
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { useRouter } from "expo-router";
-import { useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useRef, useState } from "react";
+import { Platform, StyleSheet, Text, View } from "react-native";
 
 export default function BirthdateScreen() {
-  const [birthdate, setBirthdate] = useState(new Date())
+  const bDate = useRef(new Date())
   const [showPicker, setShowPicker] = useState(false);
+  const [popupDetails, setPopupDetails] = useState<{ isVisible: boolean, message: string }>({ isVisible: false, message: "" })
+  const { username, fullname, birthdate, email, password } = useLocalSearchParams<signupDetails>()
+  const [userDetails, setUserDetails] = useState<signupDetails>({
+    username: username,
+    fullname: fullname,
+    birthdate: birthdate,
+    email: email,
+    password: password
+  })
   const router = useRouter()
+  const [pickerMoving, setPickerMoving]= useState(true)
 
   const onChange = (_: DateTimePickerEvent, selectedDate?: Date) => {
-    const currentDate = selectedDate;
-    setBirthdate(currentDate ?? new Date());
+    const currentDate = selectedDate ?? new Date();
+    bDate.current = currentDate
+    setUserDetails({ ...userDetails, birthdate: currentDate.toLocaleDateString() });
     setShowPicker(false)
+    setPickerMoving(false)
   };
 
   const handleShowPicker = () => {
     setShowPicker(true);
   };
 
+  const handleValidateBirthdate = () => {
+    const today = new Date();
+    const minAge = 18
+    const maxAge = 85
+
+    let age = today.getFullYear() - bDate.current.getFullYear();
+    const monthDiff = today.getMonth() - bDate.current.getMonth();
+    const dayDiff = today.getDate() - bDate.current.getDate();
+
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+      // to adujust for when bday hasnt happened yet
+      age--;
+    }
+
+    if (age < 0) {
+      setPopupDetails({
+        isVisible: true,
+        message: `Unfortunately, you haven't been born yet 😬`
+      })
+    } else if (age > 120) {
+      setPopupDetails({
+        isVisible: true,
+        message: `Unfortunately, you need to be alive to use this app`
+      })
+    } else if (age > 85) {
+      setPopupDetails({
+        isVisible: true,
+        message: `Unfortunately, this app was designed for users under ${maxAge} 👴🏼`
+      })
+    } else if (age < minAge) {
+      setPopupDetails({
+        isVisible: true,
+        message: "Unfortunately, you're too young to use this app 😬, come back in a few years"
+      })
+    } else {
+      router.push({
+        pathname: "/signup-login-details",
+        params: userDetails
+      })
+    }
+  }
+
   return (
-    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? 'padding' : "height"}
-      keyboardVerticalOffset={100}>
+    <CustomView backgroundColor={Colors.light.vibrantBackground}>
+      {popupDetails.isVisible && <CustomModal message={popupDetails.message} show={popupDetails.isVisible} closeBtnText="Close" handleClose={() => {
+        setPopupDetails({ ...popupDetails, isVisible: false })
+        router.dismissAll()
+      }} />}
       <Spacer />
       <Text style={styles.text}>Step 2 of 4</Text>
-      <ScrollView style={{ width: "100%" }} contentContainerStyle={styles.scroll}>
+      <CustomScrollView>
         <Spacer />
         <View style={{ width: "100%" }}>
           <CustomLabel labelText="Birthdate:" bold />
-          <CustomButton labelText={birthdate.toLocaleDateString()} type="faded" handleClick={handleShowPicker} />
-          <CustomLabel labelText="only you can see this" />
+          <CustomButton labelText={userDetails.birthdate} type="faded" handleClick={handleShowPicker} />
+          <CustomLabel labelText="🔒 other users won't see this" fade />
         </View>
         <Spacer />
         {(Platform.OS === "ios" || showPicker) && <DateTimePicker
           testID="dateTimePicker"
-          value={birthdate}
+          value={bDate.current}
           mode="date"
           onChange={onChange}
           display="spinner"
           themeVariant="dark"
+          onTouchMove={() => setPickerMoving(true)}
         />}
-      </ScrollView>
+      </CustomScrollView>
 
       <View style={styles.buttonView}>
-        <CustomButton type="prominent" labelText="Next" />
+        <CustomButton type="prominent" labelText="Next" handleClick={handleValidateBirthdate} disabled={pickerMoving} />
         <Spacer />
         <Spacer />
       </View>
-    </KeyboardAvoidingView>
+    </CustomView>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.light.vibrantBackground,
-    alignItems: "center",
-    justifyContent: "flex-start",
-    paddingHorizontal: 40,
-    width: "100%"
-  },
-  scroll: {
-    flexGrow: 1,
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "flex-start",
-  },
-  image: {
-    width: 100,
-    height: 100
-  },
   buttonView: {
     width: "80%",
   },

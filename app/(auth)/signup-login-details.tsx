@@ -1,59 +1,115 @@
+import { signupDetails } from "@/api/models/userDetails";
 import CustomButton from "@/components/buttons/CustomButton";
 import CustomInput from "@/components/inputs/CustomInput";
+import CustomModal from "@/components/modals/CustomModal";
 import Spacer from "@/components/Spacer";
+import CustomKeyboardAvoidingView from "@/components/views/CustomKeyboardAvoidingView";
+import CustomScrollView from "@/components/views/CustomScrollView";
 import { Colors } from "@/constants/Colors";
-import { useRouter } from "expo-router";
-import { useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from "react-native";
+import { inputMode } from "@/constants/customInputModeTypes";
+import { emailRegex } from "@/constants/regexes";
+import { useAuthStore } from "@/utils/authStore";
+import { useLocalSearchParams } from "expo-router";
+import { useEffect, useRef, useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import Toast from "react-native-toast-message";
 
 export default function SignupDetailsScreen() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const router = useRouter()  
+  const { username, fullname, birthdate, email, password } = useLocalSearchParams<signupDetails>()
+  const [userDetails, setUserDetails] = useState<signupDetails>({
+    username: username,
+    fullname: fullname,
+    birthdate: birthdate,
+    email: email,
+    password: password
+  })
+  const [emailInfo, setEmailInfo] = useState<{ infoTxt: string, inputMode: inputMode }>({ infoTxt: "", inputMode: "normal" })
+  const [popupDetails, setPopupDetails] = useState<{ isVisible: boolean, message: string }>({ isVisible: false, message: "" })
+  const promptedUserToConfirmEmail = useRef(false)
+  const [showActivityIndicator, setShowActivityIndicator] = useState(false)
+
+  const getPasswordInfo = (): string => {
+    if (userDetails.password.length < 1) {
+      return "choose a strong password"
+    } else if (userDetails.password.length >= 8) {
+      return ""
+    }
+    return userDetails.password.length < 1 || userDetails.password.length >= 8 ? "choose a strong password" : "❗️ must be at least 8 characters long"
+  }
+  const getPasswordInputMode = (): inputMode => {
+    return userDetails.password.length < 1 ? "normal" : userDetails.password.length < 8 ? "warn" : "normal"
+  }
+
+  const { signUp } = useAuthStore()
+
+  const handleSendVerification = async () => {
+    setShowActivityIndicator(true)
+    const response = await signUp(userDetails)
+
+    if (!response.isSuccess) {
+      setShowActivityIndicator(false)
+      Toast.show({
+        type: "info",
+        text1: "Something went wrong while trying to create your account.",
+        text2: response.info ?? ""
+      })
+    }
+    setPopupDetails({
+      ...popupDetails,
+      isVisible: false
+    })
+  }
+
+  const handleSubmit = () => {
+    if (!emailAndPasswordValid()) return
+
+    if (!promptedUserToConfirmEmail.current) {
+      setPopupDetails({
+        isVisible: true,
+        message: `We'll need to send a verification code to: "${userDetails.email}" to complete your signup.`
+      })
+      promptedUserToConfirmEmail.current = true
+    } else {
+      // if user has double checked their email
+      handleSendVerification()
+    }
+  }
+
+  const emailAndPasswordValid = (): boolean => {
+    return emailRegex.test(userDetails.email) && userDetails.password.length >= 8;
+  }
+
+  useEffect(() => {
+    if (emailRegex.test(userDetails.email) || userDetails.email.length < 1) {
+      setEmailInfo({ infoTxt: "🔒 other users won't see this", inputMode: "normal" })
+    } else {
+      setEmailInfo({ infoTxt: "❗️ doesn't look right yet", inputMode: "warn" })
+    }
+  }, [userDetails.email])
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? 'padding' : "height"}
-      keyboardVerticalOffset={100}>
+    <CustomKeyboardAvoidingView backgroundColor={Colors.light.vibrantBackground}>
+      <CustomModal show={popupDetails.isVisible} closeBtnText="Edit email" secondaryBtnText="Send verification code" message={popupDetails.message} handleClose={() => setPopupDetails({ ...popupDetails, isVisible: false })} handleSecondaryAction={handleSendVerification} />
       <Spacer />
       <Text style={styles.text}>Step 3 of 4</Text>
-      <ScrollView style={{ width: "100%" }} contentContainerStyle={styles.scroll}>
+      <CustomScrollView>
         <Spacer />
-        <CustomInput value={email} setValue={setEmail} labelText="Email:" infoText="only you can see this" showInfoTextOnFocus />
-        <Spacer size="small"/>
-        <CustomInput value={password} setValue={setPassword} labelText="Password:" infoText="choose a strong password" isPassword />
+        <CustomInput keyboardType="email-address" value={userDetails.email} setValue={e => setUserDetails({ ...userDetails, email: e })} labelText="Email:" infoText={emailInfo.infoTxt} showInfoTextAlways inputMode={emailInfo.inputMode} forceLowercase />
+        <Spacer size="small" />
+        <CustomInput value={userDetails.password} setValue={e => setUserDetails({ ...userDetails, password: e })} labelText="Password:" infoText={getPasswordInfo()} isPassword showInfoTextOnFocus inputMode={getPasswordInputMode()} />
         <Spacer />
-      </ScrollView>
+      </CustomScrollView>
 
       <View style={styles.buttonView}>
-        <CustomButton type="prominent" labelText="Next" handleClick={() => {
-          router.push("/signup-verify")
-        }} />
+        <CustomButton disabled={!emailAndPasswordValid()} type="prominent" labelText="Send verification code" handleClick={handleSubmit} isPending={showActivityIndicator} />
         <Spacer />
         <Spacer />
       </View>
-    </KeyboardAvoidingView>
+    </CustomKeyboardAvoidingView>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.light.vibrantBackground,
-    alignItems: "center",
-    justifyContent: "flex-start",
-    paddingHorizontal: 40,
-    width: "100%"
-  },
-  scroll: {
-    flexGrow: 1,
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "flex-start",
-  },
-  image: {
-    width: 100,
-    height: 100
-  },
   buttonView: {
     width: "80%",
   },

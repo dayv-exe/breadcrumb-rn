@@ -2,21 +2,29 @@ import { signupDetails } from "@/api/models/userDetails";
 import CustomButton from "@/components/buttons/CustomButton";
 import CustomInput from "@/components/inputs/CustomInput";
 import Spacer from "@/components/Spacer";
+import CustomKeyboardAvoidingView from "@/components/views/CustomKeyboardAvoidingView";
+import CustomScrollView from "@/components/views/CustomScrollView";
 import { Colors } from "@/constants/Colors";
+import { inputMode } from "@/constants/customInputModeTypes";
 import { useUsernameAvailableOnInputChange, useUsernameAvailableOnSubmit } from "@/hooks/queries/useUsernameAvailable";
 import { debounce } from "@/utils/debounce";
 import { useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 export default function SignupNameScreen() {
   const [userDetails, setUserDetails] = useState<signupDetails>({
     username: "",
     fullname: "",
-    birthdate: "",
+    birthdate: new Date().toLocaleDateString(),
     email: "",
     password: ""
   })
+
+  const router = useRouter()
+
+  const { mutate: checkUsernameAvaiblity } = useUsernameAvailableOnSubmit()
+
   const [debouncedUname, setDebouncedUname] = useState("")
 
   const debounceInput = useMemo(() => {
@@ -29,72 +37,76 @@ export default function SignupNameScreen() {
     debounceInput(userDetails.username)
   }, [userDetails.username])
 
+
   const {
-    data: isAvailable,
-    isFetching,
+    data,
+    isPending,
+    error,
   } = useUsernameAvailableOnInputChange(debouncedUname)
 
-  const {
-    isPending,
-    mutate: checkUsernameAvaiblity,
-  } = useUsernameAvailableOnSubmit()
-
-
-  function getUsernameInfoText() {
-    if (userDetails.username.length < 1) {
-      return "you can change this later"
-    } else if (isFetching) {
-      return "🔎 checking..."
-    } else if (isAvailable) {
-      return `✅ ${userDetails.username} is available`
-    } else {
-      return `❌ ${userDetails.username} is unavailable!`
-    }
+  const handleUsernameChange = (e: string) => {
+    setUserDetails({ ...userDetails, username: e })
   }
 
-  const router = useRouter()
-
-  const handleNext = () => {
-    // run final check on username
+  const handleProceedToNextPage = async () => {
     checkUsernameAvaiblity(userDetails.username, {
-      onSuccess: available => {
-        if (available) {
-          // proceed to next page
-          console.log(userDetails.username)
+      onSuccess: usernameFree => {
+        if (usernameFree.isValid) {
+          // one final check just to make sure
           router.push({
             pathname: "/signup-birthdate",
             params: userDetails
           })
-        } else {
-          // show popup for invalid username
         }
       }
     })
   }
 
-  return (
-    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? 'padding' : "height"}
-      keyboardVerticalOffset={100}>
-      <Spacer />
-      <Text style={styles.text}>Step 1 of 4</Text>
+  function getNextBtnDisabled(): boolean {
+    return !data?.isValid
+  }
 
-      <ScrollView style={{ width: "100%" }} contentContainerStyle={styles.scroll}>
+  function getUsernameInfoText(): string {
+    if (userDetails.username.length < 1) {
+      return "you can change this later"
+    } else if (isPending) {
+      return "🔎 checking..."
+    } else if (data?.isValid) {
+      return `✅ ${userDetails.username} is available`
+    } else {
+      if (error) {
+        return `🚫 ${error}`
+      }
+      return `🚫 ${data?.reason}`
+    }
+  }
+
+  function getUsernameInputMode(): inputMode {
+    if (userDetails.username.length < 1 || isPending || data?.isValid) {
+      return "normal"
+    } else {
+      return "warn"
+    }
+  }
+
+  return (
+    <CustomKeyboardAvoidingView backgroundColor={Colors.light.vibrantBackground}>
+      <CustomScrollView>
         <Spacer />
-        <CustomInput value={userDetails.username} setValue={e => setUserDetails({ ...userDetails, username: e })} labelText="Username:" infoText={getUsernameInfoText()} showInfoTextAlways disableAutoCorrect autoCapitalize="none" inputMode={userDetails.username.length > 0 && !isAvailable && !isFetching ? "warn" : "normal"} />
+        <CustomInput value={userDetails.username} setValue={e => handleUsernameChange(e)} labelText="Username:" infoText={getUsernameInfoText()} showInfoTextAlways disableAutoCorrect inputMode={getUsernameInputMode()} forceLowercase />
 
         <Spacer />
 
         <CustomInput value={userDetails.fullname ?? ""} setValue={e => setUserDetails({ ...userDetails, fullname: e })} labelText="Fullname (optional):" infoText="helps your friends find you" showInfoTextOnFocus disableAutoCorrect autoCapitalize="words" />
         <Spacer />
-
-      </ScrollView>
+      </CustomScrollView>
 
       <View style={styles.buttonView}>
-        <CustomButton type="prominent" labelText="Next" handleClick={handleNext} disabled={!isAvailable && !isFetching} />
+        <CustomButton type="prominent" labelText="Next" handleClick={handleProceedToNextPage} disabled={getNextBtnDisabled()} />
         <Spacer />
         <Spacer />
       </View>
-    </KeyboardAvoidingView>
+    </CustomKeyboardAvoidingView>
   )
 }
 
@@ -102,24 +114,6 @@ const styles = StyleSheet.create({
   usernameContainer: {
     width: "100%",
     flexDirection: "row"
-  },
-  container: {
-    flex: 1,
-    backgroundColor: Colors.light.vibrantBackground,
-    alignItems: "center",
-    justifyContent: "flex-start",
-    paddingHorizontal: 40,
-    width: "100%"
-  },
-  scroll: {
-    flexGrow: 1,
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "flex-start",
-  },
-  image: {
-    width: 100,
-    height: 100
   },
   buttonView: {
     width: "80%",

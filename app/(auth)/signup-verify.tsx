@@ -1,54 +1,103 @@
 import CustomButton from "@/components/buttons/CustomButton";
 import CustomInput from "@/components/inputs/CustomInput";
+import CustomModal from "@/components/modals/CustomModal";
 import Spacer from "@/components/Spacer";
+import CustomKeyboardAvoidingView from "@/components/views/CustomKeyboardAvoidingView";
+import CustomScrollView from "@/components/views/CustomScrollView";
 import { Colors } from "@/constants/Colors";
+import { useAuthStore } from "@/utils/authStore";
 import { useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+import Toast from "react-native-toast-message";
 
 export default function SignupVerifyScreen() {
   const [code, setCode] = useState("")
+  const { verifyEmail, resendSignUp, userEmail } = useAuthStore()
+  const [popupDetails, setPopupDetails] = useState<{ isVisible: boolean, message: string }>({ isVisible: false, message: `If you leave now, you might need to wait 24 hours before you can sign up with ${userEmail} again` })
+  const { cancelSignup } = useAuthStore()
+  const [activityIndicators, setActivityIndicators] = useState<{ verifyBtn: boolean, resendBtn: boolean }>({
+    verifyBtn: false,
+    resendBtn: false
+  })
+
+  const handleVerify = async () => {
+    setActivityIndicators({
+      ...activityIndicators, verifyBtn: true
+    })
+    const res = await verifyEmail(code)
+    if (!res.isSuccess) {
+      Toast.show({
+        text1: "Invalid verification code!",
+        type: "info",
+      })
+
+      setActivityIndicators({
+        ...activityIndicators, verifyBtn: false
+      })
+    }
+  }
+
+  const handleResendCode = async () => {
+    setActivityIndicators({
+      ...activityIndicators, resendBtn: true
+    })
+    const res = await resendSignUp()
+    if (!res.isSuccess) {
+      Toast.show({
+        text1: "Something went wrong, try again.",
+        type: "info",
+      })
+    } else {
+      Toast.show({
+        text1: "Sent a new code!",
+        type: "info",
+      })
+    }
+
+    setActivityIndicators({
+      ...activityIndicators, resendBtn: false
+    })
+  }
+
+  const handleCancelRegistration = () => {
+    setPopupDetails({
+      ...popupDetails, isVisible: true
+    })
+  }
+
+  const handleStay = () => {
+    setPopupDetails({
+      ...popupDetails, isVisible: false
+    })
+  }
+
+  const handleLeave = () => {
+    cancelSignup()
+  }
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? 'padding' : "height"}
-      keyboardVerticalOffset={100}>
+    <CustomKeyboardAvoidingView backgroundColor={Colors.light.vibrantBackground}>
+      <CustomModal show={popupDetails.isVisible} message={popupDetails.message} closeBtnText="Stay and continue" secondaryBtnText="Leave" handleSecondaryAction={handleLeave} handleClose={handleStay} />
       <Spacer />
       <Text style={styles.text}>Step 4 of 4</Text>
-      <ScrollView style={{ width: "100%" }} contentContainerStyle={styles.scroll}>
+      <CustomScrollView>
         <Spacer />
-        <CustomInput value={code} setValue={setCode} labelText="Verification code:" infoText="enter the code we sent to your email" />
-        <Spacer size="big" />
+        <CustomInput value={code} setValue={setCode} labelText="Verification code:" infoText={`enter the code we sent to ${userEmail}`} showInfoTextAlways />
+        <Spacer />
 
         <View style={styles.buttonView}>
-          <CustomButton type="prominent" labelText="Verify" />
-          <Spacer size="big" />
-          <Text style={styles.text}>Or</Text>
+          <CustomButton type="prominent" labelText="Verify" handleClick={handleVerify} isPending={activityIndicators.verifyBtn} />
           <Spacer />
-          <CustomButton type="forced-white" labelText="Resend verification code" />
+          <CustomButton type="faded" labelText="Resend verification code" handleClick={handleResendCode} isPending={activityIndicators.resendBtn} />
+          <Spacer size="big" />
+          <CustomButton labelText="Back to home" type="text" handleClick={handleCancelRegistration} />
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+      </CustomScrollView>
+    </CustomKeyboardAvoidingView>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.light.vibrantBackground,
-    alignItems: "center",
-    justifyContent: "flex-start",
-    paddingHorizontal: 40,
-    width: "100%"
-  },
-  scroll: {
-    flexGrow: 1,
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "flex-start",
-  },
-  image: {
-    width: 100,
-    height: 100
-  },
   buttonView: {
     width: "80%",
   },
