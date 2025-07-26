@@ -49,8 +49,8 @@ export default function LoginScreen() {
     const res = await login(loginDetails.email, loginDetails.password)
     if (!res.isSuccess) {
       Toast.show({
-        text1: "Incorrect login details",
-        type: "warn"
+        text1: "🚫 Incorrect login details",
+        type: "info"
       })
 
       setLoginDetails({

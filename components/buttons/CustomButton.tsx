@@ -17,7 +17,7 @@ type bProps = {
   debounceTime?: number
 }
 
-export default function CustomButton({ labelText = "button", type = "faded", width = "auto", handleClick = () => { }, adaptToTheme = false, disabled = false, allowMultipleClicks = false, isPending = false, debounceTime=500 }: bProps) {
+export default function CustomButton({ labelText = "button", type = "faded", width = "auto", handleClick = () => { }, adaptToTheme = false, disabled = false, allowMultipleClicks = false, isPending = false, debounceTime = 500 }: bProps) {
   const theme = useThemeColor
   const [clicked, setClicked] = useState(false)
 

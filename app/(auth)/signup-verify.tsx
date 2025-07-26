@@ -5,6 +5,7 @@ import Spacer from "@/components/Spacer";
 import CustomKeyboardAvoidingView from "@/components/views/CustomKeyboardAvoidingView";
 import CustomScrollView from "@/components/views/CustomScrollView";
 import { Colors } from "@/constants/Colors";
+import { useAbortSignup } from "@/hooks/queries/useAbortSignup";
 import { useAuthStore } from "@/utils/authStore";
 import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -13,12 +14,14 @@ import Toast from "react-native-toast-message";
 export default function SignupVerifyScreen() {
   const [code, setCode] = useState("")
   const { verifyEmail, resendSignUp, userEmail } = useAuthStore()
-  const [popupDetails, setPopupDetails] = useState<{ isVisible: boolean, message: string }>({ isVisible: false, message: `If you leave now, you might need to wait 24 hours before you can sign up with ${userEmail} again` })
-  const { cancelSignup } = useAuthStore()
+  const [popupDetails, setPopupDetails] = useState<{ isVisible: boolean, message: string }>({ isVisible: false, message: `Are you sure you want to cancel this signup process and lose all your progress?` })
+  const { cancelSignup, userId } = useAuthStore()
   const [activityIndicators, setActivityIndicators] = useState<{ verifyBtn: boolean, resendBtn: boolean }>({
     verifyBtn: false,
     resendBtn: false
   })
+
+  const { mutate: abort } = useAbortSignup()
 
   const handleVerify = async () => {
     setActivityIndicators({
@@ -44,12 +47,12 @@ export default function SignupVerifyScreen() {
     const res = await resendSignUp()
     if (!res.isSuccess) {
       Toast.show({
-        text1: "Something went wrong, try again.",
+        text1: "🤔 Something went wrong, try again.",
         type: "info",
       })
     } else {
       Toast.show({
-        text1: "Sent a new code!",
+        text1: "👍 Sent a new code!",
         type: "info",
       })
     }
@@ -72,6 +75,7 @@ export default function SignupVerifyScreen() {
   }
 
   const handleLeave = () => {
+    abort(userId) // delete from cognito
     cancelSignup()
   }
 

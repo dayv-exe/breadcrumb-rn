@@ -73,8 +73,8 @@ export default function RootLayout() {
   Amplify.configure({
     Auth: {
       Cognito: {
-        userPoolId: 'eu-west-2_Bmu0OwKt7',
-        userPoolClientId: '3j3e7psb2rtvrmt5pmf10i4k85',
+        userPoolId: 'eu-west-2_rlmGqLCb0',
+        userPoolClientId: '6kc5milscvpioiqphacasop8hm',
         signUpVerificationMethod: 'code',
       }
     },

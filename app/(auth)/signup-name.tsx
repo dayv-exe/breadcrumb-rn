@@ -75,7 +75,7 @@ export default function SignupNameScreen() {
       return `✅ ${userDetails.username} is available`
     } else {
       if (error) {
-        return `🚫 ${error}`
+        return `❌ ${error}`
       }
       return `🚫 ${data?.reason}`
     }

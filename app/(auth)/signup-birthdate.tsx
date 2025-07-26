@@ -60,17 +60,17 @@ export default function BirthdateScreen() {
     } else if (age > 120) {
       setPopupDetails({
         isVisible: true,
-        message: `Unfortunately, you need to be alive to use this app`
+        message: `💀💀💀 Unfortunately, you need to be alive to use this app `
       })
     } else if (age > 85) {
       setPopupDetails({
         isVisible: true,
-        message: `Unfortunately, this app was designed for users under ${maxAge} 👴🏼`
+        message: `👴🏼 Unfortunately, this app was designed for users under ${maxAge}`
       })
     } else if (age < minAge) {
       setPopupDetails({
         isVisible: true,
-        message: "Unfortunately, you're too young to use this app 😬, come back in a few years"
+        message: "😬 Unfortunately, you're too young to use this app, come back in a few years"
       })
     } else {
       router.push({

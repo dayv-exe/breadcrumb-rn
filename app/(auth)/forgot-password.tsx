@@ -47,7 +47,7 @@ export default function ResetPasswordHomeScreen() {
     setActivityIndicator(true)
     if (step === 1) {
       if (!emailRegex.test(email)) {
-        showToast("Invalid email!")
+        showToast("🚫 Invalid email!")
         return
       }
 
@@ -55,7 +55,7 @@ export default function ResetPasswordHomeScreen() {
       if (response.isSuccess) {
         setStep(2)
       } else {
-        showToast("Something went wrong try again!")
+        showToast("🤔 Something went wrong, try again!")
       }
     } else if (step === 2) {
       if (code.length > 1) {
@@ -72,7 +72,7 @@ export default function ResetPasswordHomeScreen() {
         setStep(2)
       } else {
         router.dismissTo("/login")
-        showToast("Password changed successfully!")
+        showToast("👍 Password changed successfully!")
       }
     }
 

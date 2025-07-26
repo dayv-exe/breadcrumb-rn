@@ -47,10 +47,14 @@ export default function SignupDetailsScreen() {
     const response = await signUp(userDetails)
 
     if (!response.isSuccess) {
+      let message = "🤔 Something went wrong, try again."
+      if (String(response.info).includes("UsernameExistsException")){
+        message = "😬 this email is already in use!"
+      }
       setShowActivityIndicator(false)
       Toast.show({
         type: "info",
-        text1: "Something went wrong while trying to create your account.",
+        text1: message,
         text2: response.info ?? ""
       })
     }
@@ -76,7 +80,7 @@ export default function SignupDetailsScreen() {
   }
 
   const emailAndPasswordValid = (): boolean => {
-    return emailRegex.test(userDetails.email) && userDetails.password.length >= 8;
+    return emailRegex.test(userDetails.email) && userDetails.password.length >= 8
   }
 
   useEffect(() => {

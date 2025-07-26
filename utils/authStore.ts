@@ -13,6 +13,7 @@ function isAuthError(error: unknown): error is AuthError {
 type UserState = {
   isLoggedIn: boolean
   showEmailVerificationPage: boolean
+  userId: string
   userEmail: string
   userPassword: string
   login: (email: string, password: string) => Promise<iResponse>
@@ -32,6 +33,7 @@ export const useAuthStore = create(
     showEmailVerificationPage: false,
     userEmail: "",
     userPassword: "",
+    userId: "",
     login: async (email: string, password: string) => {
       try {
         const user = await signIn({
@@ -40,7 +42,7 @@ export const useAuthStore = create(
         })
 
         if (user.isSignedIn) {
-          set({ isLoggedIn: true, showEmailVerificationPage: false, userEmail: "", userPassword: "" })
+          set({ isLoggedIn: true, showEmailVerificationPage: false, userEmail: "", userPassword: "", userId: "" })
         }
 
         return { isSuccess: user.isSignedIn }
@@ -76,7 +78,7 @@ export const useAuthStore = create(
 
         if (!user.isSignUpComplete) {
           // verify email
-          set({ showEmailVerificationPage: true, userEmail: userDetails.email.toLowerCase(), userPassword: userDetails.password })
+          set({ showEmailVerificationPage: true, userEmail: userDetails.email.toLowerCase(), userPassword: userDetails.password, userId: user.userId ?? "" })
           return { isSuccess: true }
         } else {
           const { login } = useAuthStore.getState()
@@ -90,7 +92,7 @@ export const useAuthStore = create(
       }
     },
     cancelSignup: async () => {
-      set({ showEmailVerificationPage: false, userEmail: "", userPassword: "" })
+      set({ showEmailVerificationPage: false, userEmail: "", userPassword: "", userId: "" })
     },
     checkAuthStatus: async () => {
       try {
@@ -132,7 +134,7 @@ export const useAuthStore = create(
 
         { return { isSuccess: true } }
       } catch (error) {
-        set({ userEmail: "", userPassword: "", showEmailVerificationPage: false })
+        set({ userEmail: "", userPassword: "", userId: "", showEmailVerificationPage: false })
         console.log("Failed to resend confirmation code: ", error)
         return { isSuccess: false, info: error }
       }
