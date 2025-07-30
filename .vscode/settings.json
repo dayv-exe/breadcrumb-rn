@@ -1,0 +1,10 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit",
+    "source.sortMembers": "explicit"
+  },
+  "cSpell.words": [
+    "datetimepicker",
+    "Mapbox"
+  ],
+}
