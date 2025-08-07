@@ -109,9 +109,7 @@ export default function MainScreen() {
         backgroundColor: mode === "dark" ? Colors.dark.background : Colors.light.background,
         height: 100,
         paddingTop: 10,
-        borderColor: true ? "transparent" : mode === "dark" ? "#222" : "#eee",
-        shadowOpacity: .025,
-        shadowRadius: 5,
+        borderColor: mode === "dark" ? "#333" : "#ddd",
       },
       tabBarShowLabel: true
     }}>

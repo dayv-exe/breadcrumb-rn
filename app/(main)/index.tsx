@@ -55,7 +55,7 @@ export default function MapScreen() {
         </View>
         <View>
           <CustomImageButton handleClick={() => {
-            mapMethods?.moveTo([-1.5, 50], 5)
+            mapMethods?.moveTo([-1.5, 50.7], 10)
           }} src={getIconImage("focusUserLoc", mode === "light")} />
           <Spacer size="small" />
           <CustomImageButton src={getIconImage("frameMap", mode === "light")} />

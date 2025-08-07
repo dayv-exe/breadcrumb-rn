@@ -12,6 +12,8 @@ import { useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 
+const fullnameMaxLength = 30
+
 export default function SignupNameScreen() {
   const [userDetails, setUserDetails] = useState<signupDetails>({
     username: "",
@@ -62,8 +64,15 @@ export default function SignupNameScreen() {
     })
   }
 
-  function getNextBtnDisabled(): boolean {
-    return !data?.isValid
+  function nextBtnDisabled(): boolean {
+    if (userDetails.fullname && userDetails.fullname.length > fullnameMaxLength) {
+      return true // disable next btn if full name is too long
+    }
+
+    if (!data?.isValid) {
+      return true // disable next btn is the username is too long
+    }
+    return false
   }
 
   function getUsernameInfoText(): string {
@@ -89,6 +98,14 @@ export default function SignupNameScreen() {
     }
   }
 
+  function getFullNameFeedback(): { text: string, mode: inputMode } {
+    if (userDetails.fullname && userDetails.fullname.length > fullnameMaxLength) {
+      return { text: `cannot be greater than ${fullnameMaxLength} characters`, mode: "warn" }
+    }
+
+    return { text: "helps your friends find you", mode: "normal" }
+  }
+
   return (
     <CustomKeyboardAvoidingView backgroundColor={Colors.light.vibrantBackground}>
       <CustomScrollView>
@@ -97,12 +114,12 @@ export default function SignupNameScreen() {
 
         <Spacer />
 
-        <CustomInput value={userDetails.fullname ?? ""} setValue={e => setUserDetails({ ...userDetails, fullname: e })} labelText="Fullname (optional):" infoText="helps your friends find you" showInfoTextOnFocus disableAutoCorrect autoCapitalize="words" />
+        <CustomInput value={userDetails.fullname ?? ""} setValue={e => setUserDetails({ ...userDetails, fullname: e })} labelText="Fullname (optional):" infoText={getFullNameFeedback().text} inputMode={getFullNameFeedback().mode} showInfoTextOnFocus disableAutoCorrect autoCapitalize="words" />
         <Spacer />
       </CustomScrollView>
 
       <View style={styles.buttonView}>
-        <CustomButton type="prominent" labelText="Next" handleClick={handleProceedToNextPage} disabled={getNextBtnDisabled()} />
+        <CustomButton type="prominent" labelText="Next" handleClick={handleProceedToNextPage} disabled={nextBtnDisabled()} />
         <Spacer />
         <Spacer />
       </View>
