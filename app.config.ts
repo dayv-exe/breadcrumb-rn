@@ -34,6 +34,12 @@ export default {
           RNMapboxMapsDownloadToken: process.env.SECRET_MAPBOX_KEY,
         },
       ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "This app needs access to location to display crumbs near you and also show your position on the map."
+        },
+      ],
       "expo-router",
       [
         "expo-splash-screen",

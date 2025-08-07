@@ -4,6 +4,7 @@ import { Amplify } from "aws-amplify";
 import Constants from 'expo-constants';
 import { Stack } from "expo-router";
 import { useEffect } from 'react';
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Toast, { BaseToast, ToastProps } from 'react-native-toast-message';
 
 const queryClient = new QueryClient()
@@ -82,20 +83,22 @@ export default function RootLayout() {
   })
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Stack screenOptions={{
-        headerShown: false
-      }}>
-        <Stack.Protected guard={!isLoggedIn}>
-          <Stack.Screen name="(auth)" />
-        </Stack.Protected>
+    <GestureHandlerRootView style={{flex: 1}}>
+      <QueryClientProvider client={queryClient}>
+        <Stack screenOptions={{
+          headerShown: false
+        }}>
+          <Stack.Protected guard={!isLoggedIn}>
+            <Stack.Screen name="(auth)" />
+          </Stack.Protected>
 
-        <Stack.Protected guard={isLoggedIn}>
-          <Stack.Screen name="(main)" />
-        </Stack.Protected>
+          <Stack.Protected guard={isLoggedIn}>
+            <Stack.Screen name="(main)" />
+          </Stack.Protected>
 
-      </Stack>
-      <Toast config={toastConfig} />
-    </QueryClientProvider>
+        </Stack>
+        <Toast config={toastConfig} />
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   )
 }

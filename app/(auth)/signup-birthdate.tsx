@@ -26,10 +26,14 @@ export default function BirthdateScreen() {
   const router = useRouter()
   const [pickerMoving, setPickerMoving]= useState(true)
 
+  const formatDate = (date: Date) =>
+  `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()}`;
+
+
   const onChange = (_: DateTimePickerEvent, selectedDate?: Date) => {
     const currentDate = selectedDate ?? new Date();
     bDate.current = currentDate
-    setUserDetails({ ...userDetails, birthdate: currentDate.toLocaleDateString() });
+    setUserDetails({ ...userDetails, birthdate: formatDate(currentDate) });
     setShowPicker(false)
     setPickerMoving(false)
   };
@@ -40,8 +44,8 @@ export default function BirthdateScreen() {
 
   const handleValidateBirthdate = () => {
     const today = new Date();
-    const minAge = 18
-    const maxAge = 85
+    const minAge = 13
+    const maxAge = 99
 
     let age = today.getFullYear() - bDate.current.getFullYear();
     const monthDiff = today.getMonth() - bDate.current.getMonth();

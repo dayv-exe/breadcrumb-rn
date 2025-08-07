@@ -70,7 +70,7 @@ export default function SignupDetailsScreen() {
     if (!promptedUserToConfirmEmail.current) {
       setPopupDetails({
         isVisible: true,
-        message: `We'll need to send a verification code to: "${userDetails.email}" to complete your signup.`
+        message: `We'll need to send a verification code to "${userDetails.email}" to complete your signup.`
       })
       promptedUserToConfirmEmail.current = true
     } else {
