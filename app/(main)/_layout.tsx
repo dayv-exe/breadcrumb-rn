@@ -1,4 +1,3 @@
-import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme.web";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { Tabs } from "expo-router";
@@ -77,23 +76,23 @@ type cLabelProps = {
   focused?: boolean
 }
 
-function CustomTabIcon({ name, focused, darkMode, size=20 }: cIconProps) {
+function CustomTabIcon({ name, focused, darkMode, size = 20 }: cIconProps) {
   return (
     <Image
       source={getIconImage(name, focused, darkMode)}
       style={{
         width: size,
         height: size,
-        opacity: focused ? 1 : .7
+        opacity: focused ? 1 : .8
       }}
       resizeMode="contain"
     />
   )
 }
 
-function CustomTabLabel({text, color, focused}: cLabelProps) {
+function CustomTabLabel({ text, color, focused }: cLabelProps) {
   return (
-    <Text style={[styles.tabLabel, {color: color, opacity: focused ? 1 : .7, fontWeight: focused ? "bold" : "normal"}]}>{text}</Text>
+    <Text style={[styles.tabLabel, { color: color, opacity: focused ? 1 : .8, fontWeight: focused ? "bold" : "light" }]}>{text}</Text>
   )
 }
 
@@ -103,13 +102,13 @@ export default function MainScreen() {
   const theme = useThemeColor
 
   return (
-    <Tabs screenOptions={{
+    <Tabs initialRouteName="profile" screenOptions={{
       headerShown: false,
       tabBarStyle: {
-        backgroundColor: mode === "dark" ? Colors.dark.background : Colors.light.background,
-        height: 100,
+        backgroundColor: mode === "dark" ? "#222" : "#fff",
+        height: 95,
         paddingTop: 10,
-        borderColor: mode === "dark" ? "#333" : "#ddd",
+        borderColor: mode === "dark" ? "#555" : "#ccc",
       },
       tabBarShowLabel: true
     }}>
@@ -118,17 +117,17 @@ export default function MainScreen() {
         tabBarIcon: ({ focused }) => (
           <CustomTabIcon name={"map"} focused={focused} darkMode={mode === "dark"} />
         ),
-        tabBarLabel: ({focused}) => (
+        tabBarLabel: ({ focused }) => (
           <CustomTabLabel color={theme({}, "text")} text="Map" focused={focused} />
         )
       }} />
-  
+
       <Tabs.Screen name="messages" options={{
         title: "Crumbs",
         tabBarIcon: ({ focused }) => (
           <CustomTabIcon name={"crumbs"} focused={focused} darkMode={mode === "dark"} />
         ),
-        tabBarLabel: ({focused}) => (
+        tabBarLabel: ({ focused }) => (
           <CustomTabLabel color={theme({}, "text")} text="Crumbs" focused={focused} />
         )
       }} />
@@ -138,7 +137,7 @@ export default function MainScreen() {
         tabBarIcon: ({ focused }) => (
           <CustomTabIcon name={"add"} focused={focused} darkMode={mode === "dark"} />
         ),
-        tabBarLabel: ({focused}) => (
+        tabBarLabel: ({ focused }) => (
           <CustomTabLabel color={theme({}, "text")} text="Create" focused={focused} />
         )
       }} />
@@ -148,16 +147,17 @@ export default function MainScreen() {
         tabBarIcon: ({ focused }) => (
           <CustomTabIcon name={"walls"} focused={focused} darkMode={mode === "dark"} />
         ),
-        tabBarLabel: ({focused}) => (
+        tabBarLabel: ({ focused }) => (
           <CustomTabLabel color={theme({}, "text")} text="Walls" focused={focused} />
         )
       }} />
+
       <Tabs.Screen name="profile" options={{
         title: "Me",
         tabBarIcon: ({ focused }) => (
           <CustomTabIcon name={"profile"} focused={focused} darkMode={mode === "dark"} />
         ),
-        tabBarLabel: ({focused}) => (
+        tabBarLabel: ({ focused }) => (
           <CustomTabLabel color={theme({}, "text")} text="Me" focused={focused} />
         )
       }} />

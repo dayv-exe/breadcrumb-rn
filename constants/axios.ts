@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { baseUrl } from './endpoints';
+import Constants from 'expo-constants';
 
 const axiosInstance = axios.create({
-  baseURL: baseUrl,
+  baseURL:  Constants.expoConfig?.extra?.baseUrl,
   headers: {
     'Content-Type': 'application/json',
   },

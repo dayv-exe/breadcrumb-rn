@@ -65,7 +65,8 @@ export default {
       clientPoolId: process.env.secretClientPoolId,
       baseUrl: process.env.secretBaseUrl,
       darkMapUrl: process.env.secretMapDarkStyleUrl,
-      lightMapUrl: process.env.secretMapLightStyleUrl
+      lightMapUrl: process.env.secretMapLightStyleUrl,
+      satelliteUrl: process.env.secretMapSatelliteUrl
     },
   },
 };

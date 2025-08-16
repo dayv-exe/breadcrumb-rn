@@ -1,7 +1,11 @@
 import { Colors } from "@/constants/Colors";
 import { inputMode } from "@/constants/customInputModeTypes";
+import { useThemeColor } from "@/hooks/useThemeColor";
 import { useState } from "react";
 import { DimensionValue, Image, KeyboardTypeOptions, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import CustomButton from "../buttons/CustomButton";
+import CustomEmailSuggestion from "../buttons/CustomEmailSuggestion";
+import Spacer from "../Spacer";
 
 type autoCapitalizeType = "none" | "sentences" | "words" | "characters"
 
@@ -14,26 +18,36 @@ type iProps = {
   forceLowercase?: boolean
   showInfoTextOnFocus?: boolean
   showInfoTextAlways?: boolean
+  handleForgotPassword?: () => void
   isPassword?: boolean
   disableAutoCorrect?: boolean
   autoCapitalize?: autoCapitalizeType
   inputMode?: inputMode
   keyboardType?: KeyboardTypeOptions
+  adaptToTheme?: boolean
 }
 
-export default function CustomInput({ value, setValue, labelText = "Label:", infoText = "", showInfoTextOnFocus = false, isPassword = false, disableAutoCorrect = false, autoCapitalize, inputMode = "normal", showInfoTextAlways = false, keyboardType = "default", width = "100%", forceLowercase = false }: iProps) {
+export default function CustomInput({ value, setValue, labelText = "Label:", infoText = "", showInfoTextOnFocus = false, isPassword = false, disableAutoCorrect = false, autoCapitalize, inputMode = "normal", showInfoTextAlways = false, keyboardType = "default", width = "100%", forceLowercase = false, adaptToTheme = false, handleForgotPassword }: iProps) {
   const [focused, setFocused] = useState(false)
   const [hidePassword, setHidePassword] = useState(true)
 
   const handleFocus = () => setFocused(true)
   const handleBlur = () => setFocused(false)
+  const theme = useThemeColor
+
+  if (keyboardType === "email-address") disableAutoCorrect = true
 
   return (
     <View style={[
       styles.container,
       { width: width }
     ]}>
-      <Text style={styles.labelText}>
+      <Text style={[
+        styles.labelText,
+        {
+          color: adaptToTheme ? theme({}, "text") : "#fff"
+        }
+      ]}>
         {labelText}
       </Text>
       <View style={styles.inputContainer}>
@@ -42,7 +56,9 @@ export default function CustomInput({ value, setValue, labelText = "Label:", inf
           {
             borderColor: inputMode === "normal" ? focused ? Colors.light.vibrantButton : "transparent" :
               inputMode === "warn" ? "red" :
-                "green"
+                "green",
+
+            backgroundColor: adaptToTheme ? theme({}, "fadedBackground") : Colors.dark.fadedBackground
           }
         ]}
           value={value}
@@ -54,7 +70,19 @@ export default function CustomInput({ value, setValue, labelText = "Label:", inf
               require("../../assets/images/showpassword.png")
           } />}
         </TouchableOpacity>}
+
+        {(keyboardType === "email-address") &&
+          <CustomEmailSuggestion inputVal={value} setInputVal={setValue} />
+        }
       </View>
+
+      {
+        handleForgotPassword &&
+        <View style={{ alignSelf: "flex-start", flexDirection: "column" }}>
+          <Spacer size="small" />
+          <CustomButton squashed labelText="forgot password?" type="faded" handleClick={handleForgotPassword} />
+        </View>
+      }
 
       <Text style={[
         styles.infoText,
@@ -98,7 +126,6 @@ const styles = StyleSheet.create({
   },
   labelText: {
     width: "100%",
-    color: "#fff",
     padding: 5,
     fontWeight: "600",
     fontSize: 16,

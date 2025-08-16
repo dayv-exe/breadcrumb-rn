@@ -79,18 +79,27 @@ export default function ResetPasswordHomeScreen() {
     setActivityIndicator(false)
   }
 
+  const isPasswordValid = () => {
+    return (newPassword !== cNewPassword || newPassword.length < 8) ? false : true
+  }
+
   const handleProceedBtnDisabled = () => {
     return step === 1 ? !emailRegex.test(email) :
       step === 2 ? code.length < 2 :
-        newPassword !== cNewPassword || newPassword.length < 1
+        !isPasswordValid()
   }
 
   const handleConfirmPasswordInfo = (): string => {
-    return newPassword !== cNewPassword ? "passwords don't match!" : ""
+    if (newPassword !== cNewPassword) {
+      return "passwords don't match!"
+    } else if (newPassword.length < 8) {
+      return "❗️ must be 8 or more characters long"
+    }
+    return ""
   }
 
   const handleConfirmPasswordMode = (): inputMode => {
-    return newPassword !== cNewPassword ? "warn" : "normal"
+    return !isPasswordValid() ? "warn" : "normal"
   }
 
   const getEmailInfoText = (): string => {

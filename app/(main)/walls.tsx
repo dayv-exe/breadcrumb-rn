@@ -1,8 +1,9 @@
 import CustomView from "@/components/views/CustomView";
 
 export default function WallsScreen() {
-  return (
+  return(
     <CustomView adaptToTheme>
+
     </CustomView>
   )
 }

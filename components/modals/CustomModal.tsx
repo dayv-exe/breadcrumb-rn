@@ -47,7 +47,7 @@ export default function CustomModal({ message = "Hello world!", show, closeBtnTe
             <CustomButton labelText={closeBtnText} handleClick={() => {
               setShowSpinnerPri(true)
               handleClose()
-            }} type={handleSecondaryAction ? "prominent" : "theme-faded"} isPending={showSpinnerPri} />
+            }} type={handleSecondaryAction ? "prominent" : "prominent"} isPending={showSpinnerPri} />
             {handleSecondaryAction && <Spacer />}
             {handleSecondaryAction && <CustomButton labelText={secondaryBtnText} handleClick={() => {
               setShowSpinnerSec(true)

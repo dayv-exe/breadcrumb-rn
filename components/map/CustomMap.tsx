@@ -17,12 +17,14 @@ type customMapProps = {
   userPosition?: Position
   zoomLevel?: number
   pitch?: number
+  useSatellite?: boolean
   setMapMethods: (methods: mapMethods) => void
 }
 
-export default function CustomMap({ handlePress = () => { }, handleLongPress = () => { }, mapRef, userPosition, zoomLevel = 3, pitch = 0, setMapMethods }: customMapProps) {
+export default function CustomMap({ handlePress = () => { }, handleLongPress = () => { }, mapRef, userPosition, zoomLevel = 3, pitch = 0, setMapMethods, useSatellite = false }: customMapProps) {
   const lightUrl = Constants.expoConfig?.extra?.lightMapUrl;
   const darkUrl = Constants.expoConfig?.extra?.darkMapUrl;
+  const satelliteUrl = Constants.expoConfig?.extra?.satelliteUrl
   const mode = useColorScheme()
   const cameraRef = useRef<Mapbox.Camera>(null)
 
@@ -53,7 +55,7 @@ export default function CustomMap({ handlePress = () => { }, handleLongPress = (
           setMapReady(true)
           setMapMethods(methods)
         }}
-        styleURL={mapReady ? (mode === "light" ? lightUrl : darkUrl) : Mapbox.StyleURL.Satellite}
+        styleURL={useSatellite ? satelliteUrl : mapReady ? (mode === "light" ? lightUrl : darkUrl) : satelliteUrl}
         logoEnabled={false}
         onPress={e => handlePress(e)}
         onLongPress={e => handleLongPress(e)}

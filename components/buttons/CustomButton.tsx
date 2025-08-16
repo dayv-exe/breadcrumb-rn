@@ -1,9 +1,8 @@
+import { buttonTypes } from "@/constants/buttonTypes";
 import { Colors } from "@/constants/Colors";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useState } from "react";
 import { ActivityIndicator, DimensionValue, StyleSheet, Text, TouchableOpacity } from "react-native";
-
-type buttonTypes = "prominent" | "faded" | "dark-faded" | "theme-faded" | "text" | "vibrant-text"
 
 type bProps = {
   labelText?: string
@@ -13,11 +12,14 @@ type bProps = {
   disabled?: boolean
   allowMultipleClicks?: boolean
   isPending?: boolean
+  squashed?: boolean
+  slim?: boolean
+  bold?: boolean
   handleClick?: () => void
   debounceTime?: number
 }
 
-export default function CustomButton({ labelText = "button", type = "faded", width = "auto", handleClick = () => { }, adaptToTheme = false, disabled = false, allowMultipleClicks = false, isPending = false, debounceTime = 500 }: bProps) {
+export default function CustomButton({ labelText = "button", type = "faded", width = "auto", handleClick = () => { }, adaptToTheme = false, disabled = false, allowMultipleClicks = false, isPending = false, debounceTime = 500, slim=false, squashed=false, bold=true }: bProps) {
   const theme = useThemeColor
   const [clicked, setClicked] = useState(false)
 
@@ -44,9 +46,13 @@ export default function CustomButton({ labelText = "button", type = "faded", wid
             type === "faded" ? "rgba(255, 255, 255, 0.1)" :
               type === "dark-faded" ? "rgba(0, 0, 0, 0.1)" :
                 type === "theme-faded" ? theme({}, "fadedBackground") :
+                type === "less-prominent" ? theme({}, "vibrantBackground") :
                   "transparent",
-
-        width: width
+        height: slim ? 43 : "auto",
+        width: width,
+        padding: squashed ? 6 : slim ? 10 : 15,
+        paddingHorizontal: squashed ? 13 : slim ? 10 : 15,
+        borderRadius: 15
       }
     ]}>
       {isPending && <ActivityIndicator color="#FFF" />}
@@ -55,7 +61,9 @@ export default function CustomButton({ labelText = "button", type = "faded", wid
         {
           color: type === "vibrant-text" ? Colors.light.vibrantButton :
             adaptToTheme || type === "theme-faded" ? theme({}, "text") :
-              type === "dark-faded" ? Colors.light.text : Colors.dark.text
+              type === "dark-faded" ? Colors.light.text : "#fff",
+              fontSize: squashed ? 13 :  slim ? 14 : 15,
+              fontWeight: bold ? 600 : "normal",
         }
       ]}>{labelText}</Text>
     </TouchableOpacity>
@@ -68,11 +76,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexDirection: "row",
     borderRadius: 15,
-    padding: 15,
   },
   text: {
     fontSize: 16,
     fontWeight: 600,
-    color: Colors.light.vibrantButton,
+    color: "#fff",
+    textAlign: "center"
   },
 })

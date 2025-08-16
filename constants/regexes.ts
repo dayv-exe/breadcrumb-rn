@@ -1,5 +1,6 @@
 export const usernameRegex = /^(?!.*[_.].*[_.])(?!.*(_\.|\._))[a-zA-Z0-9][a-zA-Z0-9._]*[a-zA-Z0-9]$/
 export const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+export const emojiRegex = /\p{Emoji}/u;
 
 export function validateUsername(username: string): {
   isValid: boolean;

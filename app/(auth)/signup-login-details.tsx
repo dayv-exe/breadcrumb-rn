@@ -94,7 +94,6 @@ export default function SignupDetailsScreen() {
   return (
     <CustomKeyboardAvoidingView backgroundColor={Colors.light.vibrantBackground}>
       <CustomModal show={popupDetails.isVisible} closeBtnText="Edit email" secondaryBtnText="Send verification code" message={popupDetails.message} handleClose={() => setPopupDetails({ ...popupDetails, isVisible: false })} handleSecondaryAction={handleSendVerification} />
-      <Spacer />
       <Text style={styles.text}>Step 3 of 4</Text>
       <CustomScrollView>
         <Spacer />

@@ -90,7 +90,6 @@ export default function BirthdateScreen() {
         setPopupDetails({ ...popupDetails, isVisible: false })
         router.dismissAll()
       }} />}
-      <Spacer />
       <Text style={styles.text}>Step 2 of 4</Text>
       <CustomScrollView>
         <Spacer />

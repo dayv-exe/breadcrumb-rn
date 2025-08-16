@@ -29,6 +29,10 @@ const icons = {
     light: require("../../assets/images/icons/userlocation_sel_light.png"),
     dark: require("../../assets/images/icons/userlocation_sel_dark.png")
   },
+  mapToggle: {
+    light: require("../../assets/images/icons/maptoggle_sel_light.png"),
+    dark: require("../../assets/images/icons/maptoggle_sel_dark.png")
+  }
 }
 
 export function getIconImage(name: keyof typeof icons, darkMode: boolean) {
@@ -39,9 +43,10 @@ export function getIconImage(name: keyof typeof icons, darkMode: boolean) {
 export default function MapScreen() {
   const mode = useColorScheme() ?? "light";
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['10%', '30%', '50%'], []);
+  const snapPoints = useMemo(() => ['10%', '35%', '50%'], []);
   const mapRef = useRef<Mapbox.MapView>(null);
   const [mapMethods, setMapMethods] = useState<mapMethods | null>(null)
+  const [useSatellite, setUseSatellite] = useState(false)
 
   return (
     <View style={styles.page}>
@@ -59,14 +64,15 @@ export default function MapScreen() {
           }} src={getIconImage("focusUserLoc", mode === "light")} />
           <Spacer size="small" />
           <CustomImageButton src={getIconImage("frameMap", mode === "light")} />
+          <Spacer size="small" />
         </View>
       </SafeAreaView>
 
-      <CustomMap setMapMethods={setMapMethods} mapRef={mapRef} zoomLevel={3} />
+      <CustomMap setMapMethods={setMapMethods} mapRef={mapRef} zoomLevel={3} useSatellite={useSatellite} />
 
       <BottomSheet
         ref={bottomSheetRef}
-        index={1}
+        index={0}
         snapPoints={snapPoints}
         enablePanDownToClose={false}
         backgroundStyle={[styles.bottomSheet, {

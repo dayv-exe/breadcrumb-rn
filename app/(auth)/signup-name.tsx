@@ -6,11 +6,12 @@ import CustomKeyboardAvoidingView from "@/components/views/CustomKeyboardAvoidin
 import CustomScrollView from "@/components/views/CustomScrollView";
 import { Colors } from "@/constants/Colors";
 import { inputMode } from "@/constants/customInputModeTypes";
+import { emojiRegex } from "@/constants/regexes";
 import { useUsernameAvailableOnInputChange, useUsernameAvailableOnSubmit } from "@/hooks/queries/useUsernameAvailable";
 import { debounce } from "@/utils/debounce";
 import { useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 const fullnameMaxLength = 30
 
@@ -55,6 +56,7 @@ export default function SignupNameScreen() {
       onSuccess: usernameFree => {
         if (usernameFree.isValid) {
           // one final check just to make sure
+          if (!fullnameValid()) return
           router.push({
             pathname: "/signup-birthdate",
             params: userDetails
@@ -65,8 +67,8 @@ export default function SignupNameScreen() {
   }
 
   function nextBtnDisabled(): boolean {
-    if (userDetails.fullname && userDetails.fullname.length > fullnameMaxLength) {
-      return true // disable next btn if full name is too long
+    if (!fullnameValid()) {
+      return true // disable button if fullname is not valid
     }
 
     if (!data?.isValid) {
@@ -98,9 +100,25 @@ export default function SignupNameScreen() {
     }
   }
 
+  function fullnameValid(): boolean {
+    if (userDetails.fullname && userDetails.fullname.length > fullnameMaxLength) {
+      return false
+    }
+
+    if (emojiRegex.test(userDetails.fullname ?? "")) {
+      return false
+    }
+
+    return true
+  }
+
   function getFullNameFeedback(): { text: string, mode: inputMode } {
     if (userDetails.fullname && userDetails.fullname.length > fullnameMaxLength) {
       return { text: `cannot be greater than ${fullnameMaxLength} characters`, mode: "warn" }
+    }
+
+    if (emojiRegex.test(userDetails.fullname ?? "")) {
+      return { text: `add emojis after completing the signup process`, mode: "warn" }
     }
 
     return { text: "helps your friends find you", mode: "normal" }
@@ -108,6 +126,7 @@ export default function SignupNameScreen() {
 
   return (
     <CustomKeyboardAvoidingView backgroundColor={Colors.light.vibrantBackground}>
+      <Text style={styles.text}>Step 1 of 4</Text>
       <CustomScrollView>
         <Spacer />
         <CustomInput value={userDetails.username} setValue={e => handleUsernameChange(e)} labelText="Username:" infoText={getUsernameInfoText()} showInfoTextAlways disableAutoCorrect inputMode={getUsernameInputMode()} forceLowercase />
