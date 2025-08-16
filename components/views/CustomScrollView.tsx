@@ -1,9 +1,13 @@
 import { PropsWithChildren } from "react";
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleProp, StyleSheet, ViewStyle } from "react-native";
 
-export default function CustomScrollView({children}: PropsWithChildren) {
+type props = {
+  customStyle?: StyleProp<ViewStyle>
+}
+
+export default function CustomScrollView({ children, customStyle }: PropsWithChildren<props>) {
   return (
-    <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+    <ScrollView style={styles.scroll} contentContainerStyle={[styles.scrollContent, customStyle]} keyboardShouldPersistTaps="handled">
       {children}
     </ScrollView>
   )

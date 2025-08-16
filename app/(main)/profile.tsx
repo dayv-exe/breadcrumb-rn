@@ -10,10 +10,6 @@ import { useRouter } from "expo-router";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 
 const icons = {
-  next: {
-    light: require("../../assets/images/icons/next_sel_light.png"),
-    dark: require("../../assets/images/icons/next_sel_dark.png")
-  },
   options: {
     light: require("../../assets/images/icons/options_sel_light.png"),
     dark: require("../../assets/images/icons/options_sel_dark.png")
@@ -25,7 +21,7 @@ const icons = {
   message: {
     light: require("../../assets/images/icons/messages_sel_light.png"),
     dark: require("../../assets/images/icons/messages_sel_dark.png")
-  }
+  },
 }
 
 export function getIconImage(name: keyof typeof icons, darkMode: boolean) {
@@ -46,26 +42,33 @@ export default function ProfileScreen() {
         styles.container
       ]}>
         <View style={styles.header}>
-          <CustomLabel fitContent adaptToTheme labelText="david.arubuike" />
-          <CustomImageButton handleClick={handleShowOptions} flat src={getIconImage("options", mode === "light")} />
+          <CustomLabel fitContent adaptToTheme bold labelText="david.arubuike" />
+          <View style={{ flexDirection: "row" }}>
+            <CustomImageButton size={21} src={getIconImage("findFriends", mode === "light")} flat />
+            <Spacer size="small" />
+            <CustomImageButton handleClick={handleShowOptions} flat src={getIconImage("options", mode === "light")} />
+          </View>
         </View>
 
-        <CustomScrollView>
-          <Spacer size="small" />
-          <CustomProfilePictureCircle size={150} />
+        <CustomScrollView customStyle={styles.scroll}>
           <Spacer />
-          <CustomLabel fontSize={18.5} bold labelText="David 👨🏾‍💻" textAlign="center" adaptToTheme />
-          <Spacer size="small" />
-          <CustomButton labelText="no mutual friends" squashed type="theme-faded" />
-          <Spacer size="small" />
-          <CustomLabel width={"70%"} textAlign="center" labelText="I like the sound keyboards make while you type 😄" adaptToTheme />
+          <View style={styles.profileHeader}>
+            <CustomProfilePictureCircle size={100} />
+            <Spacer />
+            <View style={styles.profileAside}>
+              <CustomLabel fontSize={18.5} bold labelText="David 👨🏾‍💻" textAlign="left" adaptToTheme />
+              <Spacer size="small" />
+              <CustomButton labelText="5 mutual friends" squashed type="theme-faded" />
+            </View>
+          </View>
+          <Spacer />
+          <CustomLabel width={"80%"} textAlign="left" labelText="I like the sound keyboards make while you type 😄" adaptToTheme />
           <Spacer />
           <View style={styles.controls}>
-            <CustomButton width={"40%"} slim labelText="Crumb" type="prominent" />
+            <View style={{ flexShrink: 1, flexGrow: 1 }}><CustomButton width={"100%"} slim labelText="Crumb" type="prominent" /></View>
             <Spacer size="small" />
             <CustomImageButton type="theme-faded" size={21} src={getIconImage("message", mode === "light")} flat />
             <Spacer size="small" />
-            <CustomImageButton type="theme-faded" size={21} src={getIconImage("findFriends", mode === "light")} flat />
           </View>
         </CustomScrollView>
       </SafeAreaView>
@@ -89,5 +92,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center"
+  },
+  profileHeader: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    flexDirection: "row"
+  },
+  profileAside: {
+    flexDirection: "column",
+    alignItems: "flex-start",
+    justifyContent: "center"
+  },
+  scroll: {
+    alignItems: "flex-start",
+    justifyContent: "flex-start"
   }
 })

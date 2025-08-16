@@ -70,10 +70,6 @@ export default function CustomInput({ value, setValue, labelText = "Label:", inf
               require("../../assets/images/showpassword.png")
           } />}
         </TouchableOpacity>}
-
-        {(keyboardType === "email-address") &&
-          <CustomEmailSuggestion inputVal={value} setInputVal={setValue} />
-        }
       </View>
 
       {
@@ -84,7 +80,7 @@ export default function CustomInput({ value, setValue, labelText = "Label:", inf
         </View>
       }
 
-      <Text style={[
+      {infoText && <Text style={[
         styles.infoText,
         {
           color: inputMode === "normal" ? "#FFF" :
@@ -99,7 +95,13 @@ export default function CustomInput({ value, setValue, labelText = "Label:", inf
               !showInfoTextOnFocus && !focused ? infoText :
                 ""
         }
-      </Text>
+      </Text>}
+      {(keyboardType === "email-address") &&
+          <View style={{width: "100%"}}>
+            <CustomEmailSuggestion inputVal={value} setInputVal={setValue} />
+            <Spacer size="small" />
+          </View>
+        }
     </View>
   )
 }
