@@ -112,7 +112,7 @@ export default function ProfileScreen() {
             <View style={styles.profileAside}>
               <CustomLabel fontSize={18.5} bold labelText={getName()} textAlign="left" adaptToTheme />
               <Spacer size="small" />
-              <CustomButton labelText="5 mutual friends" squashed type="theme-faded" />
+              <CustomButton labelText="View friends" squashed type="theme-faded" />
             </View>
           </View>
           <Spacer />

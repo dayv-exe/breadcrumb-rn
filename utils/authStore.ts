@@ -108,7 +108,6 @@ export const useAuthStore = create(
     },
     verifyEmail: async (code: string) => {
       const { userEmail, userPassword, login } = useAuthStore.getState()
-      console.log(userEmail)
       try {
         const user = await confirmSignUp({
           username: userEmail,
@@ -119,9 +118,9 @@ export const useAuthStore = create(
           login(userEmail, userPassword)
         }
 
-        return { isSuccess: user.isSignUpComplete }
+        return { isSuccess: true }
       } catch (error) {
-        console.log("error sending code... ", error)
+        console.log(error)
         return { isSuccess: false, info: error }
       }
     },

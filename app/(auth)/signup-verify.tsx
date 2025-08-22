@@ -30,10 +30,26 @@ export default function SignupVerifyScreen() {
     })
     const res = await verifyEmail(code)
     if (!res.isSuccess) {
-      Toast.show({
-        text1: "Invalid verification code!",
-        type: "info",
-      })
+      if (String(res.info).includes("CodeMismatchException")) {
+        Toast.show({
+          text1: "Invalid verification code!",
+          type: "info",
+        })
+      } else {
+        // if any other unknown error occurs cancel signup completely
+        if (String(res.info).includes("LimitExceededException")) {
+          Toast.show({
+            text1: "Too many attempts, try again after some time!",
+            type: "info",
+          })
+        } else {
+          Toast.show({
+            text1: "Something went wrong please, try again!",
+            type: "info",
+          })
+        }
+        handleLeave()
+      }
 
       setActivityIndicators({
         ...activityIndicators, verifyBtn: false

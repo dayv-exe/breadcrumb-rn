@@ -9,6 +9,12 @@ const axiosInstance = axios.create({
   },
 });
 
+export type allowedTargets = "nickname" | "name" | "bio"
+export type editUserInfoData = {
+  target: allowedTargets
+  payload: string
+}
+
 axiosInstance.interceptors.request.use(
   async config => {
     try {
