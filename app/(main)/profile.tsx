@@ -1,3 +1,4 @@
+import { UserDetails } from "@/api/models/userDetails";
 import CustomButton from "@/components/buttons/CustomButton";
 import CustomImageButton from "@/components/buttons/CustomImageButton";
 import CustomLabel from "@/components/CustomLabel";
@@ -5,9 +6,13 @@ import CustomProfilePictureCircle from "@/components/profile/CustomProfilePictur
 import Spacer from "@/components/Spacer";
 import CustomScrollView from "@/components/views/CustomScrollView";
 import CustomView from "@/components/views/CustomView";
+import { GetNickname } from "@/constants/userAccountDetails";
+import { useGetUserDetails } from "@/hooks/queries/useGetUserDetails";
 import { useColorScheme } from "@/hooks/useColorScheme.web";
 import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import { SafeAreaView, StyleSheet, View } from "react-native";
+import Toast from "react-native-toast-message";
 
 const icons = {
   options: {
@@ -35,6 +40,57 @@ export default function ProfileScreen() {
   const handleShowOptions = () => {
     router.push("/profile-settings")
   }
+  const [user, setUser] = useState<UserDetails | null>(null)
+
+  useEffect(() => {
+    getUserDetails()
+  }, [])
+
+  // const { getUserId } = useAuthStore()
+  const { mutate: getDetails } = useGetUserDetails()
+
+  async function getUserDetails() {
+    const nickname = await GetNickname()
+    if (!nickname) return
+    getDetails(nickname, {
+      onSuccess: res => {
+        if (res.error) {
+          Toast.show({
+            text1: res.error,
+            position: "top",
+            type: "info"
+          })
+
+          return
+        }
+        setUser(res.user)
+      }
+    })
+  }
+
+  const getName = (): string => {
+    if (!user) {
+      return "loading..."
+    }
+
+    if (user.name) {
+      return user.name
+    }
+
+    return user.nickname ?? "<undefined>"
+  }
+
+  const getNickname = (): string => {
+    if (!user) {
+      return "loading..."
+    }
+
+    if (user.nickname) {
+      return user.nickname
+    }
+
+    return "<undefined>"
+  }
 
   return (
     <CustomView horizontalPadding={20} adaptToTheme>
@@ -42,10 +98,8 @@ export default function ProfileScreen() {
         styles.container
       ]}>
         <View style={styles.header}>
-          <CustomLabel fitContent adaptToTheme bold labelText="david.arubuike" />
+          <CustomLabel fitContent adaptToTheme bold labelText={getNickname()} />
           <View style={{ flexDirection: "row" }}>
-            <CustomImageButton size={21} src={getIconImage("findFriends", mode === "light")} flat />
-            <Spacer size="small" />
             <CustomImageButton handleClick={handleShowOptions} flat src={getIconImage("options", mode === "light")} />
           </View>
         </View>
@@ -56,19 +110,19 @@ export default function ProfileScreen() {
             <CustomProfilePictureCircle size={100} />
             <Spacer />
             <View style={styles.profileAside}>
-              <CustomLabel fontSize={18.5} bold labelText="David 👨🏾‍💻" textAlign="left" adaptToTheme />
+              <CustomLabel fontSize={18.5} bold labelText={getName()} textAlign="left" adaptToTheme />
               <Spacer size="small" />
               <CustomButton labelText="5 mutual friends" squashed type="theme-faded" />
             </View>
           </View>
           <Spacer />
-          <CustomLabel width={"80%"} textAlign="left" labelText="I like the sound keyboards make while you type 😄" adaptToTheme />
+          {user?.bio && <CustomLabel width={"80%"} fontSize={15} textAlign="left" labelText={user?.bio ?? ""} adaptToTheme />}
+          {!user?.bio && <CustomLabel width={"80%"} fontSize={15} textAlign="left" labelText={"No bio yet"} fade italic adaptToTheme />}
           <Spacer />
           <View style={styles.controls}>
             <View style={{ flexShrink: 1, flexGrow: 1 }}><CustomButton width={"100%"} slim labelText="Crumb" type="prominent" /></View>
             <Spacer size="small" />
             <CustomImageButton type="theme-faded" size={21} src={getIconImage("message", mode === "light")} flat />
-            <Spacer size="small" />
           </View>
         </CustomScrollView>
       </SafeAreaView>

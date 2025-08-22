@@ -1,4 +1,5 @@
-import { StyleSheet, View } from "react-native";
+import { SUGGESTED_EMAIL_DOMAINS } from "@/constants/appConstants";
+import { ScrollView, StyleSheet, View } from "react-native";
 import Spacer from "../Spacer";
 import CustomButton from "./CustomButton";
 
@@ -8,11 +9,6 @@ type props = {
   useTheme?: boolean
 }
 
-const suggestions = [
-  "@gmail.com",
-  "@icloud.com",
-]
-
 export default function CustomEmailSuggestion({ inputVal, setInputVal, useTheme = false }: props) {
 
   const getEmailName = () => {
@@ -21,32 +17,37 @@ export default function CustomEmailSuggestion({ inputVal, setInputVal, useTheme 
   }
 
   return (
-    <View style={styles.container}>
-      <Spacer size="small" />
-      <View style={styles.suggestionContainer}>
+    <>
+    <Spacer size="small" />
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+      >
         {
-          suggestions.map(text => (
+          SUGGESTED_EMAIL_DOMAINS.map(text => (
             <View style={{ flexDirection: "row" }} key={text}>
-              <CustomButton squashed handleClick={setInputVal ? () => {
-                setInputVal(getEmailName() + text)
-              } : () => { }} key={text} type={useTheme ? "theme-faded" : "faded"} labelText={text} />
+              <CustomButton
+                squashed
+                handleClick={setInputVal ? () => {
+                  setInputVal(getEmailName() + text)
+                } : () => { }}
+                type={useTheme ? "theme-faded" : "faded"}
+                labelText={text}
+              />
               <Spacer size="small" />
             </View>
           ))
         }
-      </View>
-    </View>
+      </ScrollView>
+    </>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
     alignItems: "center",
-    justifyContent: "flex-start"
+    paddingHorizontal: 8,
   },
-  suggestionContainer: {
-    width: "100%",
-    flexDirection: "row"
-  }
 })

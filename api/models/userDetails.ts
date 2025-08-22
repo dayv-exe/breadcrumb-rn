@@ -10,3 +10,25 @@ export type loginDetails = {
   email: string
   password: string
 }
+
+export interface UserDetails {
+  type: string | null
+  bio: string | null;
+  birthdate: string | null;
+  birthdateChangeCount: number | null;
+  dateJoined: string | null;
+  defaultPicBg: string | null;
+  defaultPicFg: string | null;
+  dpUrl: string | null;
+  email: string | null;
+  forceChangeNickname: boolean | null;
+  isDeactivated: boolean | null;
+  isSuspended: boolean | null;
+  lastEmailChange: string | null;
+  lastLogin: string | null;
+  lastNicknameChange: string | null;
+  name: string | null;
+  nickname: string | null;
+  suspensionReason: string | null;
+  userId: string | null;
+}

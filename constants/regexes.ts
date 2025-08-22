@@ -1,3 +1,5 @@
+import { MAX_USERNAME_LEN, MIN_USERNAME_LEN } from "./appConstants";
+
 export const usernameRegex = /^(?!.*[_.].*[_.])(?!.*(_\.|\._))[a-zA-Z0-9][a-zA-Z0-9._]*[a-zA-Z0-9]$/
 export const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const emojiRegex = /\p{Emoji}/u;
@@ -30,7 +32,7 @@ export function validateUsername(username: string): {
     return {isValid: false, reason: "cannot contain both a dot and an underscore."}
   }
 
-  if (username.length < 3 || username.length > 15) {
+  if (username.length < MIN_USERNAME_LEN || username.length > MAX_USERNAME_LEN) {
     return {isValid: false, reason: "must be between 3 and 15 characters."}
   }
 

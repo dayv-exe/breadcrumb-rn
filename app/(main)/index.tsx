@@ -18,8 +18,8 @@ if (!token) {
 
 const icons = {
   addFriend: {
-    light: require("../../assets/images/icons/nfriend_sel_light.png"),
-    dark: require("../../assets/images/icons/nfriend_sel_dark.png")
+    light: require("../../assets/images/icons/findfriends_sel_light.png"),
+    dark: require("../../assets/images/icons/findfriends_sel_dark.png")
   },
   frameMap: {
     light: require("../../assets/images/icons/frame_unsel_light.png"),
@@ -43,7 +43,7 @@ export function getIconImage(name: keyof typeof icons, darkMode: boolean) {
 export default function MapScreen() {
   const mode = useColorScheme() ?? "light";
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['10%', '35%', '50%'], []);
+  const snapPoints = useMemo(() => ['7%', '35%', '50%'], []);
   const mapRef = useRef<Mapbox.MapView>(null);
   const [mapMethods, setMapMethods] = useState<mapMethods | null>(null)
   const [useSatellite, setUseSatellite] = useState(false)

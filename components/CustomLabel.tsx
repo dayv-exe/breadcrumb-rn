@@ -9,12 +9,13 @@ type lProps = {
   fontSize?: number
   width?: DimensionValue
   bold?: boolean
+  italic?: boolean
   fade?: boolean
   adaptToTheme?: boolean
   fitContent?: boolean
 }
 
-export default function CustomLabel({ labelText = "Label", textAlign = "left", adaptToTheme = false, bold = false, fade=false, fitContent=false, width="100%", fontSize=17 }: lProps) {
+export default function CustomLabel({ labelText = "Label", textAlign = "left", adaptToTheme = false, bold = false, fade=false, fitContent=false, width="100%", fontSize=17, italic=false }: lProps) {
   const theme = useThemeColor
   return (
     <Text style={[
@@ -25,7 +26,8 @@ export default function CustomLabel({ labelText = "Label", textAlign = "left", a
         textAlign: textAlign,
         opacity: fade ? .7 : 1,
         width: fitContent ? "auto" : width,
-        fontSize: fontSize
+        fontSize: fontSize,
+        fontStyle: italic ? "italic" : "normal"
       }
     ]}>{labelText}</Text>
   )

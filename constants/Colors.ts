@@ -12,7 +12,8 @@ export const Colors = {
     vibrantBackground: tintColorLight,
     vibrantButton: "#7070FF",
     fadedBackground: "rgba(0, 0, 0, .1)",
-    backgroundOverlay: 'rgba(0,0,0,0.7)'
+    backgroundOverlay: 'rgba(0,0,0,0.7)',
+    fadedVibrant: "rgba(112, 112, 238, .1)"
   },
   dark: {
     text: '#ECEDEE',
@@ -24,6 +25,7 @@ export const Colors = {
     vibrantBackground: tintColorLight,
     vibrantButton: "#7070FF",
     fadedBackground: "rgba(255, 255, 255, .1)",
-    backgroundOverlay: 'rgba(0,0,0,0.7)'
+    backgroundOverlay: 'rgba(0,0,0,0.7)',
+     fadedVibrant: "rgba(112, 112, 238, .1)"
   },
 };

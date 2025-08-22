@@ -7,7 +7,7 @@ import CustomScrollView from "@/components/views/CustomScrollView";
 import { Colors } from "@/constants/Colors";
 import { useAbortSignup } from "@/hooks/queries/useAbortSignup";
 import { useAuthStore } from "@/utils/authStore";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
 
@@ -20,6 +20,7 @@ export default function SignupVerifyScreen() {
     verifyBtn: false,
     resendBtn: false
   })
+  const resetCodeCount = useRef(0)
 
   const { mutate: abort } = useAbortSignup()
 
@@ -41,6 +42,8 @@ export default function SignupVerifyScreen() {
   }
 
   const handleResendCode = async () => {
+    if (resetCodeCount.current >= 3) return
+
     setActivityIndicators({
       ...activityIndicators, resendBtn: true
     })
@@ -92,7 +95,7 @@ export default function SignupVerifyScreen() {
         <View style={styles.buttonView}>
           <CustomButton type="prominent" labelText="Verify" handleClick={handleVerify} isPending={activityIndicators.verifyBtn} />
           <Spacer />
-          <CustomButton type="faded" labelText="Resend verification code" handleClick={handleResendCode} isPending={activityIndicators.resendBtn} />
+          <CustomButton type="faded" labelText="Resend verification code" handleClick={handleResendCode} isPending={activityIndicators.resendBtn} disabled={resetCodeCount.current >= 3} />
           <Spacer size="big" />
           <CustomButton labelText="Back to home" type="text" handleClick={handleCancelRegistration} />
         </View>

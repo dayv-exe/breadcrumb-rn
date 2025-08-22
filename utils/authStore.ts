@@ -162,7 +162,7 @@ export const useAuthStore = create(
         console.log("reset password error: ", error)
         return { isSuccess: false, info: error }
       }
-    }
+    },
   }), {
     name: "auth-store",
     storage: createJSONStorage(() => ({

@@ -1,6 +1,6 @@
 import CustomView from "@/components/views/CustomView";
 
-export default function WallsScreen() {
+export default function SearchScreen() {
   return(
     <CustomView adaptToTheme>
 

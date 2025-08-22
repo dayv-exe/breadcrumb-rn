@@ -4,11 +4,10 @@ import CustomFloatingSquare from "./CustomFloatingSquare";
 
 type props = {
   text: string
-  fade?: boolean
   allowWidthExpansion?: boolean
 }
 
-export default function CustomTextButton({ text, fade = false, allowWidthExpansion=false }: props) {
+export default function CustomTextButton({ text, allowWidthExpansion=false }: props) {
   const theme = useThemeColor
 
   return (
@@ -17,7 +16,6 @@ export default function CustomTextButton({ text, fade = false, allowWidthExpansi
         styles.text,
         {
           color: theme({}, "text"),
-          opacity: fade ? .7 : 1
         }
       ]}>{text}</Text>
     </CustomFloatingSquare>

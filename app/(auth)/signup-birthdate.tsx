@@ -5,6 +5,7 @@ import CustomModal from "@/components/modals/CustomModal";
 import Spacer from "@/components/Spacer";
 import CustomScrollView from "@/components/views/CustomScrollView";
 import CustomView from "@/components/views/CustomView";
+import { MAX_AGE, MIN_AGE } from "@/constants/appConstants";
 import { Colors } from "@/constants/Colors";
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -24,10 +25,10 @@ export default function BirthdateScreen() {
     password: password
   })
   const router = useRouter()
-  const [pickerMoving, setPickerMoving]= useState(true)
+  const [pickerMoving, setPickerMoving] = useState(true)
 
   const formatDate = (date: Date) =>
-  `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()}`;
+    `${date.getDate().toString().padStart(2, "0")}/${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getFullYear()}`;
 
 
   const onChange = (_: DateTimePickerEvent, selectedDate?: Date) => {
@@ -44,8 +45,6 @@ export default function BirthdateScreen() {
 
   const handleValidateBirthdate = () => {
     const today = new Date();
-    const minAge = 13
-    const maxAge = 99
 
     let age = today.getFullYear() - bDate.current.getFullYear();
     const monthDiff = today.getMonth() - bDate.current.getMonth();
@@ -61,17 +60,12 @@ export default function BirthdateScreen() {
         isVisible: true,
         message: `Unfortunately, you haven't been born yet 😬`
       })
-    } else if (age > 120) {
+    } else if (age > MAX_AGE) {
       setPopupDetails({
         isVisible: true,
         message: `💀💀💀 Unfortunately, you need to be alive to use this app `
       })
-    } else if (age > 85) {
-      setPopupDetails({
-        isVisible: true,
-        message: `👴🏼 Unfortunately, this app was designed for users under ${maxAge}`
-      })
-    } else if (age < minAge) {
+    } else if (age < MIN_AGE) {
       setPopupDetails({
         isVisible: true,
         message: "😬 Unfortunately, you're too young to use this app, come back in a few years"
@@ -96,7 +90,7 @@ export default function BirthdateScreen() {
         <View style={{ width: "100%" }}>
           <CustomLabel labelText="Birthdate:" bold />
           <CustomButton labelText={userDetails.birthdate} type="faded" handleClick={handleShowPicker} />
-          <CustomLabel labelText="🔒 other users won't see this" fade />
+          <CustomLabel labelText="🔒 other users won't see this" fontSize={15} />
         </View>
         <Spacer />
         {(Platform.OS === "ios" || showPicker) && <DateTimePicker

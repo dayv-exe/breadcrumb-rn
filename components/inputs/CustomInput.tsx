@@ -86,7 +86,6 @@ export default function CustomInput({ value, setValue, labelText = "Label:", inf
           color: inputMode === "normal" ? "#FFF" :
             inputMode === "warn" ? "#fff" :
               "#fff",
-          opacity: inputMode === "normal" ? 0.8 : 1
         }
       ]}>
         {
@@ -99,7 +98,6 @@ export default function CustomInput({ value, setValue, labelText = "Label:", inf
       {(keyboardType === "email-address") &&
           <View style={{width: "100%"}}>
             <CustomEmailSuggestion inputVal={value} setInputVal={setValue} />
-            <Spacer size="small" />
           </View>
         }
     </View>
@@ -131,13 +129,11 @@ const styles = StyleSheet.create({
     padding: 5,
     fontWeight: "600",
     fontSize: 16,
-    opacity: 1
   },
   infoText: {
     width: "100%",
     color: "#fff",
     padding: 5,
-    opacity: .8
   },
   showToggle: {
     position: "absolute",

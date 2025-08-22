@@ -67,6 +67,7 @@ export default function LoginScreen() {
       <CustomScrollView>
         <Spacer />
         <CustomInput keyboardType="email-address" value={loginDetails.email} setValue={e => setLoginDetails({ ...loginDetails, email: e })} labelText="Email:" infoText="" forceLowercase />
+        <Spacer />
         <CustomInput value={loginDetails.password} setValue={e => setLoginDetails({ ...loginDetails, password: e })} isPassword labelText="Password:" infoText="" handleForgotPassword={handleForgotPassword} />
       </CustomScrollView>
 

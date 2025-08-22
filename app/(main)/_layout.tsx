@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme.web";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { Tabs } from "expo-router";
@@ -32,6 +33,16 @@ const icons = {
     dark: {
       selected: require("../../assets/images/icons/walls_sel_light.png"),
       unselected: require("../../assets/images/icons/walls_unsel_light.png")
+    }
+  },
+  search: {
+    light: {
+      selected: require("../../assets/images/icons/search_sel_dark.png"),
+      unselected: require("../../assets/images/icons/search_unsel_dark.png")
+    },
+    dark: {
+      selected: require("../../assets/images/icons/search_sel_light.png"),
+      unselected: require("../../assets/images/icons/search_unsel_light.png")
     }
   },
 
@@ -76,14 +87,13 @@ type cLabelProps = {
   focused?: boolean
 }
 
-function CustomTabIcon({ name, focused, darkMode, size = 20 }: cIconProps) {
+function CustomTabIcon({ name, focused, darkMode, size = 21 }: cIconProps) {
   return (
     <Image
       source={getIconImage(name, focused, darkMode)}
       style={{
         width: size,
         height: size,
-        opacity: focused ? 1 : .8
       }}
       resizeMode="contain"
     />
@@ -92,7 +102,7 @@ function CustomTabIcon({ name, focused, darkMode, size = 20 }: cIconProps) {
 
 function CustomTabLabel({ text, color, focused }: cLabelProps) {
   return (
-    <Text style={[styles.tabLabel, { color: color, opacity: focused ? 1 : .8, fontWeight: focused ? "bold" : "light" }]}>{text}</Text>
+    <Text style={[styles.tabLabel, { color: color, fontWeight: focused ? "bold" : "light" }]}>{text}</Text>
   )
 }
 
@@ -105,17 +115,17 @@ export default function MainScreen() {
     <Tabs initialRouteName="profile" screenOptions={{
       headerShown: false,
       tabBarStyle: {
-        backgroundColor: mode === "dark" ? "#222" : "#fff",
-        height: 95,
+        backgroundColor: mode === "dark" ? Colors.dark.background : Colors.light.background,
+        height: 80,
         paddingTop: 10,
         borderColor: mode === "dark" ? "#555" : "#ccc",
       },
-      tabBarShowLabel: true
+      tabBarShowLabel: false
     }}>
       <Tabs.Screen name="index" options={{
         title: "Map",
         tabBarIcon: ({ focused }) => (
-          <CustomTabIcon name={"map"} focused={focused} darkMode={mode === "dark"} />
+          <CustomTabIcon size={22} name={"map"} focused={focused} darkMode={mode === "dark"} />
         ),
         tabBarLabel: ({ focused }) => (
           <CustomTabLabel color={theme({}, "text")} text="Map" focused={focused} />
@@ -123,32 +133,32 @@ export default function MainScreen() {
       }} />
 
       <Tabs.Screen name="messages" options={{
-        title: "Crumbs",
+        title: "Message",
         tabBarIcon: ({ focused }) => (
           <CustomTabIcon name={"crumbs"} focused={focused} darkMode={mode === "dark"} />
         ),
         tabBarLabel: ({ focused }) => (
-          <CustomTabLabel color={theme({}, "text")} text="Crumbs" focused={focused} />
+          <CustomTabLabel color={theme({}, "text")} text="Chat" focused={focused} />
         )
       }} />
 
       <Tabs.Screen name="add" options={{
         title: "Post",
         tabBarIcon: ({ focused }) => (
-          <CustomTabIcon name={"add"} focused={focused} darkMode={mode === "dark"} />
+          <CustomTabIcon name={"add"} focused={focused} size={23} darkMode={mode === "dark"} />
         ),
         tabBarLabel: ({ focused }) => (
           <CustomTabLabel color={theme({}, "text")} text="Create" focused={focused} />
         )
       }} />
 
-      <Tabs.Screen name="walls" options={{
-        title: "Walls",
+      <Tabs.Screen name="search" options={{
+        title: "Search",
         tabBarIcon: ({ focused }) => (
-          <CustomTabIcon name={"walls"} focused={focused} darkMode={mode === "dark"} />
+          <CustomTabIcon name={"search"} focused={focused}  darkMode={mode === "dark"} />
         ),
         tabBarLabel: ({ focused }) => (
-          <CustomTabLabel color={theme({}, "text")} text="Walls" focused={focused} />
+          <CustomTabLabel color={theme({}, "text")} text="Search" focused={focused} />
         )
       }} />
 

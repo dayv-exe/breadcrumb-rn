@@ -1,17 +1,18 @@
 import { StyleSheet, View } from "react-native";
 
-type spaceSize = "small" | "medium" | "big"
+type spaceSize = "tiny" | "small" | "medium" | "big"
 
 type sProps = {
   size?: spaceSize
 }
 
-export default function Spacer({ size="medium" }: sProps) {
+export default function Spacer({ size = "medium" }: sProps) {
   return (
     <View style={
       size === "big" ? styles.big :
         size === "medium" ? styles.medium :
-          styles.small
+          size === "small" ? styles.small :
+            styles.tiny
     }>
 
     </View>
@@ -19,6 +20,9 @@ export default function Spacer({ size="medium" }: sProps) {
 }
 
 const styles = StyleSheet.create({
+  tiny: {
+    padding: 2
+  },
   small: {
     padding: 5
   },

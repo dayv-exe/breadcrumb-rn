@@ -93,7 +93,7 @@ export default function ProfileSettingsScreen() {
                   <CustomLabel fitContent adaptToTheme fade labelText={item.name} />
                   {item.value && <CustomLabel fitContent adaptToTheme labelText={item.value} />}
                 </View>
-                <CustomImageButton flat fadeImg src={getIconImage("next", mode === "light")} />
+                <CustomImageButton flat src={getIconImage("next", mode === "light")} />
               </TouchableOpacity>
             </View>
           )}
