@@ -13,12 +13,12 @@ import { SafeAreaView, SectionList, StyleSheet, Text, TouchableOpacity, View } f
 
 const icons = {
   next: {
-    light: require("../assets/images/icons/next_sel_light.png"),
-    dark: require("../assets/images/icons/next_sel_dark.png")
+    light: require("../../assets/images/icons/next_sel_light.png"),
+    dark: require("../../assets/images/icons/next_sel_dark.png")
   },
   back: {
-    light: require("../assets/images/icons/back_sel_light.png"),
-    dark: require("../assets/images/icons/back_sel_dark.png")
+    light: require("../../assets/images/icons/back_sel_light.png"),
+    dark: require("../../assets/images/icons/back_sel_dark.png")
   },
 }
 
@@ -36,7 +36,6 @@ export default function ProfileSettingsScreen() {
 
   const handleLogout = () => {
     logout()
-    router.dismiss()
   }
   const sections = [
     {
@@ -52,9 +51,7 @@ export default function ProfileSettingsScreen() {
     {
       title: '🔐 Privacy', data: [
         { name: 'Blocked Users', value: "" },
-        { name: 'Restricted Users', value: "" },
         { name: "Logout", value: "", handleClick: handleLogout },
-        { name: 'Deactivate account', value: "" },
         { name: 'Delete account', value: "" },
         { name: 'Bug report', value: "" },
       ]

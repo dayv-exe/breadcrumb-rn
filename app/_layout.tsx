@@ -93,7 +93,7 @@ export default function RootLayout() {
           </Stack.Protected>
 
           <Stack.Protected guard={isLoggedIn}>
-            <Stack.Screen name="(main)" />
+            <Stack.Screen name="(protected)" />
           </Stack.Protected>
 
         </Stack>

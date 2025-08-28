@@ -29,6 +29,14 @@ export default {
     },
     plugins: [
       [
+        "react-native-vision-camera",
+        {
+          "cameraPermissionText": "$(PRODUCT_NAME) needs access to your camera to take photos and videos.",
+          "enableMicrophonePermission": true,
+          "microphonePermissionText": "$(PRODUCT_NAME) needs access to your microphone to record audio."
+        }
+      ],
+      [
         "@rnmapbox/maps",
         {
           RNMapboxMapsDownloadToken: process.env.SECRET_MAPBOX_KEY,

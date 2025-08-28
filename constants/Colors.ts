@@ -1,4 +1,5 @@
 const tintColorLight = '#70B8FF';
+const darkTintColorLight = "#3D9FFF"
 const tintColorDark = '#fff';
 
 export const Colors = {
@@ -10,6 +11,7 @@ export const Colors = {
     tabIconDefault: '#687076',
     tabIconSelected: tintColorLight,
     vibrantBackground: tintColorLight,
+    darkenVibrant: darkTintColorLight,
     vibrantButton: "#7070FF",
     fadedBackground: "rgba(0, 0, 0, .1)",
     backgroundOverlay: 'rgba(0,0,0,0.7)',
@@ -23,6 +25,7 @@ export const Colors = {
     tabIconDefault: '#9BA1A6',
     tabIconSelected: tintColorDark,
     vibrantBackground: tintColorLight,
+    darkenVibrant: darkTintColorLight,
     vibrantButton: "#7070FF",
     fadedBackground: "rgba(255, 255, 255, .1)",
     backgroundOverlay: 'rgba(0,0,0,0.7)',

@@ -1,9 +1,13 @@
 import { useColorScheme } from "@/hooks/useColorScheme.web";
+import { showSettingsAlert } from "@/utils/helpers";
 import Mapbox from "@rnmapbox/maps";
 import { Position } from "@rnmapbox/maps/lib/typescript/src/types/Position";
 import Constants from "expo-constants";
-import { useRef, useState } from "react";
+import * as Location from "expo-location";
+import { useEffect, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
+import CustomLabel from "../CustomLabel";
+import CustomButton from "../buttons/CustomButton";
 
 export interface mapMethods {
   moveTo: (position: Position, newZoomLevel?: number) => void
@@ -21,12 +25,33 @@ type customMapProps = {
   setMapMethods: (methods: mapMethods) => void
 }
 
+type permissionProps = {
+  handleGrantPermission: () => void
+}
+function PermissionScreen({ handleGrantPermission }: permissionProps) {
+  return (
+    <View style={{
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: "#000"
+    }}>
+      <CustomLabel textAlign="center" labelText="🔐" fontSize={21} />
+      <CustomLabel width="80%" textAlign="center" labelText="Allow location access to see nearby walls and crumbs on the map." />
+      <CustomButton type="less-vibrant-text" labelText="Grant Permission" handleClick={handleGrantPermission} />
+    </View>
+  )
+}
+
 export default function CustomMap({ handlePress = () => { }, handleLongPress = () => { }, mapRef, userPosition, zoomLevel = 3, pitch = 0, setMapMethods, useSatellite = false }: customMapProps) {
   const lightUrl = Constants.expoConfig?.extra?.lightMapUrl;
   const darkUrl = Constants.expoConfig?.extra?.darkMapUrl;
   const satelliteUrl = Constants.expoConfig?.extra?.satelliteUrl
   const mode = useColorScheme()
   const cameraRef = useRef<Mapbox.Camera>(null)
+  const [location, setLocation] = useState<Location.LocationObject | null>(null)
+  const [permissionGranted, setPermissionGranted] = useState(false)
+
 
   const [mapReady, setMapReady] = useState(false);
 
@@ -44,9 +69,27 @@ export default function CustomMap({ handlePress = () => { }, handleLongPress = (
     }
   }
 
+  async function handlePermissions(showPopUp: boolean = true) {
+    const status = await Location.requestForegroundPermissionsAsync()
+
+    if (!status.granted && !status.canAskAgain) {
+      if (showPopUp) showSettingsAlert("Location")
+      return
+    }
+
+    if (status.granted) {
+      setPermissionGranted(true)
+    }
+  }
+
+  useEffect(() => {
+    handlePermissions(false)
+  }, [])
+
+
   return (
     <View style={styles.container}>
-      <Mapbox.MapView
+      {permissionGranted && <Mapbox.MapView
         rotateEnabled={false}
         ref={mapRef}
         style={styles.map}
@@ -68,7 +111,9 @@ export default function CustomMap({ handlePress = () => { }, handleLongPress = (
             minDisplacement={10}
             requestsAlwaysUse={true} />
         }
-      </Mapbox.MapView>
+      </Mapbox.MapView>}
+
+      {!permissionGranted && <PermissionScreen handleGrantPermission={handlePermissions} />}
     </View>
   )
 }

@@ -19,7 +19,7 @@ type bProps = {
   debounceTime?: number
 }
 
-export default function CustomButton({ labelText = "button", type = "faded", width = "auto", handleClick = () => { }, adaptToTheme = false, disabled = false, allowMultipleClicks = false, isPending = false, debounceTime = 500, slim=false, squashed=false, bold=true }: bProps) {
+export default function CustomButton({ labelText = "button", type = "faded", width = "auto", handleClick = () => { }, adaptToTheme = false, disabled = false, allowMultipleClicks = false, isPending = false, debounceTime = 500, slim = false, squashed = false, bold = true }: bProps) {
   const theme = useThemeColor
   const [clicked, setClicked] = useState(false)
 
@@ -46,8 +46,8 @@ export default function CustomButton({ labelText = "button", type = "faded", wid
             type === "faded" ? "rgba(255, 255, 255, 0.1)" :
               type === "dark-faded" ? "rgba(0, 0, 0, 0.1)" :
                 type === "theme-faded" ? theme({}, "fadedBackground") :
-                type === "less-prominent" ? theme({}, "vibrantBackground") :
-                  "transparent",
+                  type === "less-prominent" ? theme({}, "darkenVibrant") :
+                    "transparent",
         height: slim ? 43 : "auto",
         width: width,
         padding: squashed ? 6 : slim ? 10 : 15,
@@ -60,10 +60,11 @@ export default function CustomButton({ labelText = "button", type = "faded", wid
         styles.text,
         {
           color: type === "vibrant-text" ? Colors.light.vibrantButton :
-            adaptToTheme || type === "theme-faded" ? theme({}, "text") :
-              type === "dark-faded" ? Colors.light.text : "#fff",
-              fontSize: squashed ? 13 :  slim ? 14 : 15,
-              fontWeight: bold ? 600 : "normal",
+            type === "less-vibrant-text" ? Colors.light.darkenVibrant :
+              adaptToTheme || type === "theme-faded" ? theme({}, "text") :
+                type === "dark-faded" ? Colors.light.text : "#fff",
+          fontSize: squashed ? 13 : slim ? 14 : 15,
+          fontWeight: bold ? 600 : "normal",
         }
       ]}>{labelText}</Text>
     </TouchableOpacity>

@@ -23,7 +23,6 @@ export default function SignupNameScreen() {
     email: "",
     password: ""
   })
-
   const router = useRouter()
 
   const { mutate: checkUsernameAvaiblity } = useUsernameAvailableOnSubmit()

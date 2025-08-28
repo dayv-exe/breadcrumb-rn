@@ -5,7 +5,7 @@ import CustomModal from "@/components/modals/CustomModal";
 import Spacer from "@/components/Spacer";
 import CustomScrollView from "@/components/views/CustomScrollView";
 import CustomView from "@/components/views/CustomView";
-import { MAX_AGE, MIN_AGE } from "@/constants/appConstants";
+import { MAX_AGE, MAX_RIDICULOUS_AGE, MIN_AGE } from "@/constants/appConstants";
 import { Colors } from "@/constants/Colors";
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -59,6 +59,11 @@ export default function BirthdateScreen() {
       setPopupDetails({
         isVisible: true,
         message: `Unfortunately, you haven't been born yet 😬`
+      })
+    } else if (age > MAX_RIDICULOUS_AGE) {
+      setPopupDetails({
+        isVisible: true,
+        message: "😂 lol"
       })
     } else if (age > MAX_AGE) {
       setPopupDetails({

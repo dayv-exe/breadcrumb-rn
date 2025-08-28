@@ -16,16 +16,16 @@ import Toast from "react-native-toast-message";
 
 const icons = {
   options: {
-    light: require("../../assets/images/icons/options_sel_light.png"),
-    dark: require("../../assets/images/icons/options_sel_dark.png")
+    light: require("../../../assets/images/icons/options_sel_light.png"),
+    dark: require("../../../assets/images/icons/options_sel_dark.png")
   },
   findFriends: {
-    light: require("../../assets/images/icons/findfriends_sel_light.png"),
-    dark: require("../../assets/images/icons/findfriends_sel_dark.png")
+    light: require("../../../assets/images/icons/findfriends_sel_light.png"),
+    dark: require("../../../assets/images/icons/findfriends_sel_dark.png")
   },
   message: {
-    light: require("../../assets/images/icons/messages_sel_light.png"),
-    dark: require("../../assets/images/icons/messages_sel_dark.png")
+    light: require("../../../assets/images/icons/messages_sel_light.png"),
+    dark: require("../../../assets/images/icons/messages_sel_dark.png")
   },
 }
 
@@ -120,7 +120,7 @@ export default function ProfileScreen() {
           {!user?.bio && <CustomLabel width={"80%"} fontSize={15} textAlign="left" labelText={"No bio yet"} fade italic adaptToTheme />}
           <Spacer />
           <View style={styles.controls}>
-            <View style={{ flexShrink: 1, flexGrow: 1 }}><CustomButton width={"100%"} slim labelText="Crumb" type="prominent" /></View>
+            <View style={{ flexShrink: 1, flexGrow: 1 }}><CustomButton width={"100%"} slim labelText="Crumb" type="less-prominent" /></View>
             <Spacer size="small" />
             <CustomImageButton type="theme-faded" size={21} src={getIconImage("message", mode === "light")} flat />
           </View>

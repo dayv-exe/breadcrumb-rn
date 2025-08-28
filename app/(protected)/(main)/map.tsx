@@ -3,6 +3,7 @@ import CustomLabel from "@/components/CustomLabel";
 import CustomMap, { mapMethods } from "@/components/map/CustomMap";
 import Spacer from "@/components/Spacer";
 import { Colors } from "@/constants/Colors";
+import { useThemeColor } from "@/hooks/useThemeColor";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import Mapbox from "@rnmapbox/maps";
 import Constants from "expo-constants";
@@ -18,20 +19,20 @@ if (!token) {
 
 const icons = {
   addFriend: {
-    light: require("../../assets/images/icons/findfriends_sel_light.png"),
-    dark: require("../../assets/images/icons/findfriends_sel_dark.png")
+    light: require("../../../assets/images/icons/findfriends_sel_light.png"),
+    dark: require("../../../assets/images/icons/findfriends_sel_dark.png")
   },
   frameMap: {
-    light: require("../../assets/images/icons/frame_unsel_light.png"),
-    dark: require("../../assets/images/icons/frame_unsel_dark.png")
+    light: require("../../../assets/images/icons/frame_unsel_light.png"),
+    dark: require("../../../assets/images/icons/frame_unsel_dark.png")
   },
   focusUserLoc: {
-    light: require("../../assets/images/icons/userlocation_sel_light.png"),
-    dark: require("../../assets/images/icons/userlocation_sel_dark.png")
+    light: require("../../../assets/images/icons/userlocation_sel_light.png"),
+    dark: require("../../../assets/images/icons/userlocation_sel_dark.png")
   },
   mapToggle: {
-    light: require("../../assets/images/icons/maptoggle_sel_light.png"),
-    dark: require("../../assets/images/icons/maptoggle_sel_dark.png")
+    light: require("../../../assets/images/icons/maptoggle_sel_light.png"),
+    dark: require("../../../assets/images/icons/maptoggle_sel_dark.png")
   }
 }
 
@@ -42,14 +43,16 @@ export function getIconImage(name: keyof typeof icons, darkMode: boolean) {
 
 export default function MapScreen() {
   const mode = useColorScheme() ?? "light";
+  const theme = useThemeColor
   const bottomSheetRef = useRef<BottomSheet>(null);
-  const snapPoints = useMemo(() => ['7%', '35%', '50%'], []);
+  const snapPoints = useMemo(() => ['7%', '15', '25%', '35%'], []);
   const mapRef = useRef<Mapbox.MapView>(null);
   const [mapMethods, setMapMethods] = useState<mapMethods | null>(null)
   const [useSatellite, setUseSatellite] = useState(false)
 
+
   return (
-    <View style={styles.page}>
+    <View style={[styles.page, { backgroundColor: theme({}, "background") }]}>
 
       <SafeAreaView style={styles.headerWrapper}>
         <View>
