@@ -139,6 +139,11 @@ export default function MainScreen() {
     if (segments.length < 1) return true
     return false
   }
+
+  const isMapActive = () => {
+    // removes tabbar border when map screen is visible to allow drawer blend in with tabbar
+    return segments[2] === "map"
+  }
   const isDarkMode = mode === "dark" || isAddActive()  // to force navbar into dark mode when showing add screen with camera active because it looks better
 
   return (
@@ -146,9 +151,9 @@ export default function MainScreen() {
       headerShown: false,
       tabBarStyle: {
         backgroundColor: isDarkMode ? Colors.dark.background : Colors.light.background,
-        height: 85,
-        paddingTop: 10,
-        borderColor: isDarkMode ? "#555" : "#ccc",
+        height: 95,
+        paddingTop: 12,
+        borderColor: isAddActive() || isMapActive() ? "transparent" : isDarkMode ? "#444" : "#ccc",
       },
       tabBarShowLabel: false
     }}>

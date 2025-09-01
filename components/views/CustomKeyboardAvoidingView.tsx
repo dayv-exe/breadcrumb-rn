@@ -1,6 +1,6 @@
 import { Colors } from "@/constants/Colors";
 import { PropsWithChildren } from "react";
-import { DimensionValue, KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
+import { DimensionValue, KeyboardAvoidingView, StyleSheet } from "react-native";
 
 type ckavProps = {
   backgroundColor?: string
@@ -18,7 +18,7 @@ export default function CustomKeyboardAvoidingView({ children, backgroundColor =
         justifyContent: verticalAlign,
         paddingHorizontal: horizontalPadding
       }
-    ]} behavior={Platform.OS === "ios" ? 'padding' : "height"}
+    ]} behavior="padding"
       keyboardVerticalOffset={verticalOffset}>
       {children}
     </KeyboardAvoidingView>

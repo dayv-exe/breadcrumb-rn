@@ -5,10 +5,12 @@ import Spacer from "@/components/Spacer";
 import { Colors } from "@/constants/Colors";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import { useIsFocused } from "@react-navigation/native";
 import Mapbox from "@rnmapbox/maps";
 import Constants from "expo-constants";
 import { useMemo, useRef, useState } from "react";
 import { SafeAreaView, StyleSheet, Text, useColorScheme, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const token = Constants.expoConfig?.extra?.mapboxToken;
 if (!token) {
@@ -49,12 +51,14 @@ export default function MapScreen() {
   const mapRef = useRef<Mapbox.MapView>(null);
   const [mapMethods, setMapMethods] = useState<mapMethods | null>(null)
   const [useSatellite, setUseSatellite] = useState(false)
+  const inset = useSafeAreaInsets()
+  const isFocused = useIsFocused()
 
 
   return (
     <View style={[styles.page, { backgroundColor: theme({}, "background") }]}>
 
-      <SafeAreaView style={styles.headerWrapper}>
+      <SafeAreaView style={[styles.headerWrapper, { marginTop: inset.top }]}>
         <View>
           <CustomImageButton src={getIconImage("addFriend", mode === "light")} />
         </View>
@@ -68,10 +72,11 @@ export default function MapScreen() {
           <Spacer size="small" />
           <CustomImageButton src={getIconImage("frameMap", mode === "light")} />
           <Spacer size="small" />
+
         </View>
       </SafeAreaView>
 
-      <CustomMap setMapMethods={setMapMethods} mapRef={mapRef} zoomLevel={3} useSatellite={useSatellite} />
+      {isFocused && <CustomMap setMapMethods={setMapMethods} mapRef={mapRef} zoomLevel={3} useSatellite={useSatellite} />}
 
       <BottomSheet
         ref={bottomSheetRef}
@@ -83,7 +88,7 @@ export default function MapScreen() {
         }]}
         handleIndicatorStyle={{ backgroundColor: mode === "dark" ? Colors.dark.text : Colors.light.text }}
       >
-        <BottomSheetView style={{ paddingHorizontal: 30, paddingVertical: 10 }}>
+        <BottomSheetView style={{ paddingHorizontal: 30, paddingVertical: 10, }}>
           <CustomLabel labelText="crumbs" adaptToTheme />
           <CustomLabel labelText="crumbs you received or sent will show here" adaptToTheme fade />
           <Spacer size="big" />

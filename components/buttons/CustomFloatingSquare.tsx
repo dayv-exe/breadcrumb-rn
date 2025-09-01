@@ -17,7 +17,7 @@ export default function CustomFloatingSquare({ handleClick, children, allowWidth
     <TouchableOpacity style={[
       isFlat ? styles.flatContainer : styles.container,
       {
-        backgroundColor: theme({}, type === "theme-faded" ? "fadedBackground" : "background"),
+        backgroundColor: type === "text" ? "transparent" : theme({}, type === "theme-faded" ? "fadedBackground" : "background"),
         width: allowWidthExpansion ? "auto" : 43,
         height: allowWidthExpansion ? "auto" : 43,
         paddingVertical: allowWidthExpansion ? 10 : 0,

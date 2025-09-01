@@ -4,12 +4,15 @@ import CustomProfilePictureCircle from "@/components/profile/CustomProfilePictur
 import Spacer from "@/components/Spacer";
 import CustomView from "@/components/views/CustomView";
 import { Colors } from "@/constants/Colors";
+import { useDeleteAccount } from "@/hooks/queries/useDeleteAccount";
 import { useColorScheme } from "@/hooks/useColorScheme.web";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useAuthStore } from "@/utils/authStore";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { SafeAreaView, SectionList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 
 const icons = {
   next: {
@@ -29,10 +32,31 @@ export function getIconImage(name: keyof typeof icons, darkMode: boolean) {
 
 export default function ProfileSettingsScreen() {
   const { logout } = useAuthStore()
+  const {mutate: delAccount} = useDeleteAccount()
   const [pending, setPending] = useState(false)
   const theme = useThemeColor
   const mode = useColorScheme()
   const router = useRouter()
+  const inset = useSafeAreaInsets()
+  const [popup, setPopup] = useState<{isVisible: boolean, text: string, priBtnText: string, secBtnText: string}>()
+
+  const handleDeleteAccount = () => {
+    router.push("/(protected)/deleteAccount")
+  }
+
+  const handleDelAccount = () => {
+    delAccount("", {onSuccess: res => {
+      if (!res.successful) {
+        Toast.show({
+          type: "info",
+          text1: res.reason,
+          position: "top",
+        })
+      } else {
+        logout()
+      }
+    }})
+  }
 
   const handleLogout = () => {
     logout()
@@ -52,7 +76,7 @@ export default function ProfileSettingsScreen() {
       title: '🔐 Privacy', data: [
         { name: 'Blocked Users', value: "" },
         { name: "Logout", value: "", handleClick: handleLogout },
-        { name: 'Delete account', value: "" },
+        { name: 'Delete account', value: "", handleClick: handleDelAccount },
         { name: 'Bug report', value: "" },
       ]
     },
@@ -67,7 +91,8 @@ export default function ProfileSettingsScreen() {
   return (
     <CustomView horizontalPadding={0} adaptToTheme>
       <SafeAreaView style={[
-        styles.container
+        styles.container,
+        {marginTop: inset.top}
       ]}>
         <View style={styles.header}>
           <CustomImageButton flat src={getIconImage("back", mode === "light")} handleClick={() => {

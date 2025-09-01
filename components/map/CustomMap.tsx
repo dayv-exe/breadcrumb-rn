@@ -6,6 +6,7 @@ import Constants from "expo-constants";
 import * as Location from "expo-location";
 import { useEffect, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import CustomLabel from "../CustomLabel";
 import CustomButton from "../buttons/CustomButton";
 
@@ -51,6 +52,7 @@ export default function CustomMap({ handlePress = () => { }, handleLongPress = (
   const cameraRef = useRef<Mapbox.Camera>(null)
   const [location, setLocation] = useState<Location.LocationObject | null>(null)
   const [permissionGranted, setPermissionGranted] = useState(false)
+  const inset = useSafeAreaInsets()
 
 
   const [mapReady, setMapReady] = useState(false);
@@ -99,9 +101,11 @@ export default function CustomMap({ handlePress = () => { }, handleLongPress = (
           setMapMethods(methods)
         }}
         styleURL={useSatellite ? satelliteUrl : mapReady ? (mode === "light" ? lightUrl : darkUrl) : satelliteUrl}
-        logoEnabled={false}
         onPress={e => handlePress(e)}
         onLongPress={e => handleLongPress(e)}
+        attributionPosition={{ bottom: 100, right: 10 }}
+        attributionEnabled
+        logoEnabled={false}
       >
         <Mapbox.Camera ref={cameraRef} centerCoordinate={[0, 0]} zoomLevel={zoomLevel} animationDuration={1000} pitch={pitch} />
 
