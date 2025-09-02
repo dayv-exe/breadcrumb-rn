@@ -3,7 +3,7 @@ import { MAX_VIDEO_DURATION_MILLISECONDS } from "@/constants/appConstants";
 import { Colors } from "@/constants/Colors";
 import { showSettingsAlert } from "@/utils/helpers";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { PropsWithChildren, useState } from "react";
 import { SafeAreaView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Reanimated, { cancelAnimation, Easing, Extrapolation, interpolate, runOnJS, useAnimatedProps, useSharedValue, withTiming } from 'react-native-reanimated';
@@ -23,6 +23,18 @@ const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera)
 
 type camProps = {
   device: CameraDevice
+}
+
+function ControlButtonContainer({ children }: PropsWithChildren) {
+  return (
+    <View style={{
+      backgroundColor: "rgba(0, 0, 0, .1)",
+      padding: 2,
+      borderRadius: "100%",
+    }}>
+      {children}
+    </View>
+  )
 }
 
 function CrumbTypePicker() {
@@ -60,16 +72,19 @@ function CameraScreen({ device }: camProps) {
       zoomOffset.value = zoom.value
     })
     .onUpdate(event => {
-      const zoomDelta = -event.translationY / 40
+      const zoomDelta = -event.translationY / 30
       const z = zoomOffset.value + zoomDelta
       // const z = zoomOffset.value * event.scale
       if (!isRecording) return
       zoom.value = interpolate(
         z,
-        [1, 13],
-        [device.minZoom, 13],
+        [1, 15],
+        [device.minZoom, 15],
         Extrapolation.CLAMP,
       )
+    })
+    .onTouchesUp(() => {
+      runOnJS(handleTouchEnd)()
     })
 
   const animatedProps = useAnimatedProps<CameraProps>(
@@ -102,12 +117,10 @@ function CameraScreen({ device }: camProps) {
 
   return (
     <GestureDetector gesture={gesture}>
-      <SafeAreaView onTouchEnd={() => {
-        handleTouchEnd()
-      }} style={styles.cameraContainer}>
+      <SafeAreaView style={styles.cameraContainer}>
         <ReanimatedCamera
           enableZoomGesture
-          style={[StyleSheet.absoluteFill, {backgroundColor: "black"}]}
+          style={[StyleSheet.absoluteFill, { backgroundColor: "black" }]}
           device={device}
           isActive={true}
           animatedProps={animatedProps}
@@ -116,26 +129,25 @@ function CameraScreen({ device }: camProps) {
         {isRecording && <RecordingIndicator />}
         {!isRecording && <View style={styles.cameraControls}>
           <CustomImageButton type="text" src={require("../../assets/images/icons/noflash_sel_light.png")} size={25} />
-          <CustomLabel labelText="Flash" textAlign="center" fontSize={12} />
-          <Spacer size="small" />
+          <CustomLabel labelText="flash" textAlign="center" fontSize={12} />
+          <Spacer size="tiny" />
           <CustomImageButton type="text" src={require("../../assets/images/icons/flipcamera_sel_light.png")} size={25} />
-          <CustomLabel labelText="flip" textAlign="center" fontSize={12} />
+        
         </View>}
         {!isRecording && <View style={[styles.topControls, { paddingTop: insets.top }]}>
-          <CustomImageButton type="text" src={require("../../assets/images/icons/findfriends_sel_light.png")} size={25} handleClick={() => router.push("/find-friends")} />
-          <CustomImageButton type="text" src={require("../../assets/images/icons/walls_sel_light.png")} size={25} handleClick={() => router.push("/create-wall")} />
+          <ControlButtonContainer>
+            <CustomImageButton type="text" src={require("../../assets/images/icons/findfriends_sel_light.png")} size={22} handleClick={() => router.push("/find-friends")} />
+          </ControlButtonContainer>
+          <ControlButtonContainer>
+            <CustomImageButton type="text" src={require("../../assets/images/icons/walls_sel_light.png")} size={22} handleClick={() => router.push("/create-wall")} />
+          </ControlButtonContainer>
         </View>}
         {!isRecording && <View style={styles.galleryContainer}>
           <CustomImageButton type="text" src={require("../../assets/images/icons/gallery_unsel_light.png")} size={35} />
         </View>}
-        <View style={{
-          position: "absolute",
-          alignItems: "center",
-          justifyContent: "center",
-          bottom: 55,
-        }}>
-          <View onTouchEnd={handleTouchEnd} style={[styles.videoShutter, { backgroundColor: isRecording ? "red" : "transparent" }]}>
-            <TouchableOpacity delayLongPress={150} onLongPress={startRecording} style={[styles.photoShutter, { borderColor: isRecording ? "transparent" : "#ddd", backgroundColor: isRecording ? "transparent" : "white" }]}>
+        <View style={styles.shutterContainer}>
+          <View style={[styles.videoShutter, { backgroundColor: isRecording ? "red" : "transparent" }]}>
+            <TouchableOpacity delayLongPress={150} onLongPress={startRecording} style={[styles.photoShutter, { borderColor: isRecording ? "transparent" : "#ccc", backgroundColor: isRecording ? "transparent" : "white" }]}>
             </TouchableOpacity>
           </View>
           {isRecording && <RecordingProgressRing size={90} strokeWidth={10} progress={progress} />}
@@ -216,12 +228,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "black"
   },
+  shutterContainer: {
+    position: "absolute",
+    alignItems: "center",
+    justifyContent: "center",
+    bottom: 55,
+  },
   photoShutter: {
     borderRadius: "100%",
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "white",
-    borderWidth: 10,
+    borderWidth: 7,
     width: 80,
     height: 80,
   },
@@ -243,10 +261,11 @@ const styles = StyleSheet.create({
   },
   cameraControls: {
     position: "absolute",
-    right: 15,
+    right: 7,
     backgroundColor: "rgba(0, 0, 0, .1)",
     borderRadius: 100,
-    padding: 5
+    paddingHorizontal: 2,
+    paddingVertical: 4
   },
   topControls: {
     position: "absolute",
