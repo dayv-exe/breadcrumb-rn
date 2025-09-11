@@ -86,7 +86,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{flex: 1}}>
       <QueryClientProvider client={queryClient}>
         <Stack screenOptions={{
-          headerShown: false
+          headerShown: false,
         }}>
           <Stack.Protected guard={!isLoggedIn}>
             <Stack.Screen name="(auth)" />

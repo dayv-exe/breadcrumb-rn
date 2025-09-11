@@ -11,7 +11,7 @@ import { useGetUserDetails } from "@/hooks/queries/useGetUserDetails";
 import { useColorScheme } from "@/hooks/useColorScheme.web";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import { Platform, SafeAreaView, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 
@@ -21,8 +21,8 @@ const icons = {
     dark: require("../../../assets/images/icons/options_sel_dark.png")
   },
   findFriends: {
-    light: require("../../../assets/images/icons/findfriends_sel_light.png"),
-    dark: require("../../../assets/images/icons/findfriends_sel_dark.png")
+    light: require("../../../assets/images/icons/searchfriends_sel_light.png"),
+    dark: require("../../../assets/images/icons/searchfriends_sel_dark.png")
   },
   message: {
     light: require("../../../assets/images/icons/messages_sel_light.png"),
@@ -95,16 +95,17 @@ export default function ProfileScreen() {
   }
 
   return (
-    <CustomView horizontalPadding={20} adaptToTheme>
+    <CustomView horizontalPadding={0} adaptToTheme>
       <SafeAreaView style={[
         styles.container,
         {
-          marginTop: inset.top,
+          marginTop: inset.top + (Platform.OS === "android" ? 10 : 0),
         }
       ]}>
         <View style={styles.header}>
           <CustomLabel fitContent adaptToTheme bold labelText={getNickname()} />
           <View style={{ flexDirection: "row" }}>
+            <CustomImageButton src={getIconImage("findFriends", mode === "light")} flat size={18} type="theme-faded" />
             <CustomImageButton handleClick={handleShowOptions} flat src={getIconImage("options", mode === "light")} />
           </View>
         </View>
@@ -121,14 +122,11 @@ export default function ProfileScreen() {
             </View>
           </View>
           <Spacer />
-          {user?.bio && <CustomLabel width={"80%"} fontSize={15} textAlign="left" labelText={user?.bio ?? ""} adaptToTheme />}
-          {!user?.bio && <CustomLabel width={"80%"} fontSize={15} textAlign="left" labelText={"No bio yet"} fade italic adaptToTheme />}
-          <Spacer />
-          <View style={styles.controls}>
-            <View style={{ flexShrink: 1, flexGrow: 1 }}><CustomButton width={"100%"} slim labelText="Crumb" type="less-prominent" /></View>
-            <Spacer size="small" />
-            <CustomImageButton type="theme-faded" size={21} src={getIconImage("message", mode === "light")} flat />
+          <View style={styles.bio}>
+            {user?.bio && <CustomLabel width={"80%"} fontSize={15} textAlign="left" labelText={user?.bio ?? ""} adaptToTheme />}
+            {!user?.bio && <CustomLabel width={"80%"} fontSize={15} textAlign="left" labelText={"No bio yet"} fade italic adaptToTheme />}
           </View>
+          <Spacer size="small" />
         </CustomScrollView>
       </SafeAreaView>
     </CustomView>
@@ -146,17 +144,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     flexDirection: "row",
+    paddingHorizontal: 20,
   },
   controls: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    paddingHorizontal: 20
   },
   profileHeader: {
     width: "100%",
     alignItems: "center",
     justifyContent: "flex-start",
-    flexDirection: "row"
+    flexDirection: "row",
+    paddingHorizontal: 20
   },
   profileAside: {
     flexDirection: "column",
@@ -166,5 +167,9 @@ const styles = StyleSheet.create({
   scroll: {
     alignItems: "flex-start",
     justifyContent: "flex-start"
+  },
+  bio: {
+    width: "100%",
+    paddingHorizontal: 20
   }
 })

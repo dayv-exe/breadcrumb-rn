@@ -1,25 +1,29 @@
-import { buttonTypes } from "@/constants/buttonTypes";
+import { buttonTypes, getBackgroundColor } from "@/constants/buttonTypes";
 import { Colors } from "@/constants/Colors";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useState } from "react";
-import { ActivityIndicator, DimensionValue, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { ActivityIndicator, AnimatableNumericValue, DimensionValue, Image, StyleSheet, Text, TouchableOpacity } from "react-native";
+import Spacer from "../Spacer";
 
 type bProps = {
   labelText?: string
   type?: buttonTypes
   width?: DimensionValue
+  imgSrc?: any
+  imgSize?: number
   adaptToTheme?: boolean
   disabled?: boolean
   allowMultipleClicks?: boolean
   isPending?: boolean
   squashed?: boolean
+  borderRadius?: string | AnimatableNumericValue
   slim?: boolean
   bold?: boolean
   handleClick?: () => void
   debounceTime?: number
 }
 
-export default function CustomButton({ labelText = "button", type = "faded", width = "auto", handleClick = () => { }, adaptToTheme = false, disabled = false, allowMultipleClicks = false, isPending = false, debounceTime = 500, slim = false, squashed = false, bold = true }: bProps) {
+export default function CustomButton({ labelText = "button", type = "faded", width = "auto", handleClick = () => { }, adaptToTheme = false, disabled = false, allowMultipleClicks = false, isPending = false, debounceTime = 500, slim = false, squashed = false, bold = true, imgSrc, borderRadius = 15, imgSize=21 }: bProps) {
   const theme = useThemeColor
   const [clicked, setClicked] = useState(false)
 
@@ -41,21 +45,25 @@ export default function CustomButton({ labelText = "button", type = "faded", wid
     }} style={[
       styles.button,
       {
-        backgroundColor: disabled ? Colors.dark.tabIconDefault :
-          type === "prominent" ? Colors.light.vibrantButton :
-            type === "faded" ? "rgba(255, 255, 255, 0.1)" :
-              type === "dark-faded" ? "rgba(0, 0, 0, 0.1)" :
-                type === "theme-faded" ? theme({}, "fadedBackground") :
-                  type === "less-prominent" ? theme({}, "darkenVibrant") :
-                    "transparent",
+        backgroundColor: disabled ? Colors.dark.tabIconDefault : getBackgroundColor(type ?? "text", theme),
         height: slim ? 43 : "auto",
         width: width,
         padding: squashed ? 6 : slim ? 10 : 15,
         paddingHorizontal: squashed ? 13 : slim ? 10 : 15,
-        borderRadius: 15
+        borderRadius: borderRadius,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
       }
     ]}>
       {isPending && <ActivityIndicator color="#FFF" />}
+      {imgSrc && <>
+        <Image source={imgSrc} style={{
+          width: imgSize,
+          height: imgSize
+        }} />
+        <Spacer size="small" />
+      </>}
       <Text style={[
         styles.text,
         {
@@ -76,7 +84,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     flexDirection: "row",
-    borderRadius: 15,
   },
   text: {
     fontSize: 16,

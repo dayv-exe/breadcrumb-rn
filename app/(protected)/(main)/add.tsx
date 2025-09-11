@@ -6,7 +6,7 @@ export default function AddScreen() {
   const isFocused = useIsFocused()
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: "black"}}>
       {isFocused && <CustomCamera />}
     </View>
   )

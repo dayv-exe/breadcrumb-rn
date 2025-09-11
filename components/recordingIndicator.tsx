@@ -9,14 +9,14 @@ export default function RecordingIndicator() {
   const pulseStyle = usePulseAnimation(true, {duration: 400})
 
   return (
-    <View style={{ position: "absolute", top: insets.top + 10, width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
+    <View style={{ position: "absolute", top: insets.top + 10, width: "auto", flexDirection: "row", alignItems: "center", justifyContent: "center", backgroundColor: "rgba(0, 0, 0, 0.25)", paddingHorizontal: 7, borderRadius: 100 }}>
       <Animated.View style={[{
         width: 13,
         height:13,
         borderRadius: "100%",
         backgroundColor: "red",
       }, pulseStyle]} />
-      <CustomLabel labelText={`rec`} width={"auto"} fontSize={16} />
+      <CustomLabel labelText={`rec`} textAlign="center" width={"auto"} fontSize={15} />
     </View>
   )
 }

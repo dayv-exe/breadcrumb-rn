@@ -30,15 +30,17 @@ type permissionProps = {
   handleGrantPermission: () => void
 }
 function PermissionScreen({ handleGrantPermission }: permissionProps) {
+  const mode = useColorScheme()
+
   return (
     <View style={{
       flex: 1,
       alignItems: "center",
       justifyContent: "center",
-      backgroundColor: "#000"
+      backgroundColor: mode === "dark" ? "#1c1c1c" : "#fafafa"
     }}>
-      <CustomLabel textAlign="center" labelText="🔐" fontSize={21} />
-      <CustomLabel width="80%" textAlign="center" labelText="Allow location access to see nearby walls and crumbs on the map." />
+      <CustomLabel textAlign="center" adaptToTheme labelText="🔐" fontSize={21} />
+      <CustomLabel width="80%" textAlign="center" adaptToTheme labelText="Allow location access to see nearby walls and crumbs on the map." />
       <CustomButton type="less-vibrant-text" labelText="Grant Permission" handleClick={handleGrantPermission} />
     </View>
   )
@@ -53,7 +55,6 @@ export default function CustomMap({ handlePress = () => { }, handleLongPress = (
   const [location, setLocation] = useState<Location.LocationObject | null>(null)
   const [permissionGranted, setPermissionGranted] = useState(false)
   const inset = useSafeAreaInsets()
-
 
   const [mapReady, setMapReady] = useState(false);
 
@@ -100,14 +101,14 @@ export default function CustomMap({ handlePress = () => { }, handleLongPress = (
           setMapReady(true)
           setMapMethods(methods)
         }}
-        styleURL={useSatellite ? satelliteUrl : mapReady ? (mode === "light" ? lightUrl : darkUrl) : satelliteUrl}
+        styleURL={useSatellite ? satelliteUrl : mode === "light" ? lightUrl : darkUrl}
         onPress={e => handlePress(e)}
         onLongPress={e => handleLongPress(e)}
         attributionPosition={{ bottom: 100, right: 10 }}
         attributionEnabled
         logoEnabled={false}
       >
-        <Mapbox.Camera ref={cameraRef} centerCoordinate={[0, 0]} zoomLevel={zoomLevel} animationDuration={1000} pitch={pitch} />
+        <Mapbox.Camera ref={cameraRef} centerCoordinate={[-1.393892369785663, 50.918201981005836]} zoomLevel={zoomLevel} animationDuration={0} pitch={pitch} />
 
         {userPosition &&
           <Mapbox.UserLocation

@@ -4,7 +4,7 @@ const tintColorDark = '#fff';
 
 export const Colors = {
   light: {
-    text: '#11181C',
+    text: '#1c1c1e',
     background: '#fff',
     tint: tintColorLight,
     icon: '#687076',
@@ -18,7 +18,7 @@ export const Colors = {
     fadedVibrant: "rgba(112, 112, 238, .1)"
   },
   dark: {
-    text: '#ECEDEE',
+    text: 'rgba(255, 255, 255, .9)',
     background: '#0f0f0f',
     tint: tintColorDark,
     icon: '#9BA1A6',

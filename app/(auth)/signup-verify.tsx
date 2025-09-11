@@ -14,7 +14,7 @@ import Toast from "react-native-toast-message";
 export default function SignupVerifyScreen() {
   const [code, setCode] = useState("")
   const { verifyEmail, resendSignUp, userEmail } = useAuthStore()
-  const [popupDetails, setPopupDetails] = useState<{ isVisible: boolean, message: string }>({ isVisible: false, message: `Are you sure you want to cancel this signup process and lose all your progress?` })
+  const [popupDetails, setPopupDetails] = useState<{ isVisible: boolean, message: string }>({ isVisible: false, message: `Are you sure you want to cancel the signup process?` })
   const { cancelSignup, userId } = useAuthStore()
   const [activityIndicators, setActivityIndicators] = useState<{ verifyBtn: boolean, resendBtn: boolean }>({
     verifyBtn: false,
@@ -30,9 +30,14 @@ export default function SignupVerifyScreen() {
     })
     const res = await verifyEmail(code)
     if (!res.isSuccess) {
-      if (String(res.info).includes("CodeMismatchException")) {
+      if (String(res.info).includes("CodeMismatchException") || String(res.info).includes("InvalidParameterException")) {
         Toast.show({
           text1: "Invalid verification code!",
+          type: "info",
+        })
+      } else if (String(res.info).includes("EmptyConfirmSignUpCode")) {
+         Toast.show({
+          text1: "Enter the code to verify!",
           type: "info",
         })
       } else {
@@ -100,7 +105,7 @@ export default function SignupVerifyScreen() {
 
   return (
     <CustomKeyboardAvoidingView backgroundColor={Colors.light.vibrantBackground}>
-      <CustomModal show={popupDetails.isVisible} message={popupDetails.message} closeBtnText="Stay and continue" secondaryBtnText="Leave" handleSecondaryAction={handleLeave} handleClose={handleStay} />
+      <CustomModal show={popupDetails.isVisible} message={popupDetails.message} closeBtnText="No, stay and continue" secondaryBtnText="Yes, leave" handleSecondaryAction={handleLeave} handleClose={handleStay} />
       <Spacer />
       <Text style={styles.text}>Step 4 of 4</Text>
       <CustomScrollView>
@@ -113,7 +118,7 @@ export default function SignupVerifyScreen() {
           <Spacer />
           <CustomButton type="faded" labelText="Resend verification code" handleClick={handleResendCode} isPending={activityIndicators.resendBtn} disabled={resetCodeCount.current >= 3} />
           <Spacer size="big" />
-          <CustomButton labelText="Back to home" type="text" handleClick={handleCancelRegistration} />
+          <CustomButton labelText="Cancel" type="text" handleClick={handleCancelRegistration} />
         </View>
       </CustomScrollView>
     </CustomKeyboardAvoidingView>

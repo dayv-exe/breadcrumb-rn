@@ -8,6 +8,7 @@ import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { useIsFocused } from "@react-navigation/native";
 import Mapbox from "@rnmapbox/maps";
 import Constants from "expo-constants";
+import { useRouter } from "expo-router";
 import { useMemo, useRef, useState } from "react";
 import { SafeAreaView, StyleSheet, Text, useColorScheme, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -21,8 +22,8 @@ if (!token) {
 
 const icons = {
   addFriend: {
-    light: require("../../../assets/images/icons/findfriends_sel_light.png"),
-    dark: require("../../../assets/images/icons/findfriends_sel_dark.png")
+    light: require("../../../assets/images/icons/searchfriends_sel_light.png"),
+    dark: require("../../../assets/images/icons/searchfriends_sel_dark.png")
   },
   frameMap: {
     light: require("../../../assets/images/icons/frame_unsel_light.png"),
@@ -53,6 +54,11 @@ export default function MapScreen() {
   const [useSatellite, setUseSatellite] = useState(false)
   const inset = useSafeAreaInsets()
   const isFocused = useIsFocused()
+  const router = useRouter()
+
+  function handleAddFriend() {
+    router.push("/find-friends")
+  }
 
 
   return (
@@ -60,7 +66,7 @@ export default function MapScreen() {
 
       <SafeAreaView style={[styles.headerWrapper, { marginTop: inset.top }]}>
         <View>
-          <CustomImageButton src={getIconImage("addFriend", mode === "light")} />
+          <CustomImageButton src={getIconImage("addFriend", mode === "light")} handleClick={handleAddFriend} />
         </View>
         <View style={[styles.headerTextContainer, { backgroundColor: mode === "dark" ? Colors.dark.background : Colors.light.background }]}>
           <Text style={[styles.headerText, { color: mode === "dark" ? Colors.dark.text : Colors.light.text }]}>0 crumbs</Text>
@@ -76,7 +82,7 @@ export default function MapScreen() {
         </View>
       </SafeAreaView>
 
-      {isFocused && <CustomMap setMapMethods={setMapMethods} mapRef={mapRef} zoomLevel={3} useSatellite={useSatellite} />}
+      {isFocused && <CustomMap setMapMethods={setMapMethods} mapRef={mapRef} zoomLevel={12.5} useSatellite={useSatellite} />}
 
       <BottomSheet
         ref={bottomSheetRef}
@@ -130,8 +136,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   bottomSheet: {
-    borderRadius: 20,
+    borderTopLeftRadius: "7%",
+    borderTopRightRadius: "7%",
     shadowRadius: 10,
-    shadowOpacity: .25
+    shadowOpacity: .25,
+    elevation: 5
   }
 });

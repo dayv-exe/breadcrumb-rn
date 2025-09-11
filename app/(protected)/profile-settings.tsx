@@ -92,15 +92,7 @@ export default function ProfileSettingsScreen() {
     <CustomView horizontalPadding={0} adaptToTheme>
       <SafeAreaView style={[
         styles.container,
-        {marginTop: inset.top}
       ]}>
-        <View style={styles.header}>
-          <CustomImageButton flat src={getIconImage("back", mode === "light")} handleClick={() => {
-            router.dismiss()
-          }} />
-          <CustomLabel labelText="Profile" fitContent adaptToTheme bold />
-          <CustomImageButton src={"."} flat />
-        </View>
         <Spacer />
         <CustomProfilePictureCircle showInstruction />
         <Spacer />

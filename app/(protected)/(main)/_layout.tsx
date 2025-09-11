@@ -101,7 +101,7 @@ function CustomTabIcon({ name, focused, darkMode, size = 21 }: cIconProps) {
         resizeMode="contain"
       />
 
-      {focused && <View style={{
+      {/* {focused && <View style={{
         position: "absolute",
         width: 5,
         height: 5,
@@ -110,7 +110,7 @@ function CustomTabIcon({ name, focused, darkMode, size = 21 }: cIconProps) {
         left: 8.5,
         right: 0,
         borderRadius: "100%"
-      }}></View>}
+      }}></View>} */}
     </View>
   )
 }
@@ -147,12 +147,12 @@ export default function MainScreen() {
   const isDarkMode = mode === "dark" || isAddActive()  // to force navbar into dark mode when showing add screen with camera active because it looks better
 
   return (
-    <Tabs initialRouteName="add" screenOptions={{
+    <Tabs initialRouteName="search" screenOptions={{
       headerShown: false,
       tabBarStyle: {
         backgroundColor: isDarkMode ? Colors.dark.background : Colors.light.background,
         height: 95,
-        paddingTop: 12,
+        paddingTop: 14,
         borderColor: isAddActive() || isMapActive() ? "transparent" : isDarkMode ? "#444" : "#ccc",
       },
       tabBarShowLabel: false

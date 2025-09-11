@@ -4,6 +4,7 @@ import CustomInput from "@/components/inputs/CustomInput";
 import Spacer from "@/components/Spacer";
 import CustomKeyboardAvoidingView from "@/components/views/CustomKeyboardAvoidingView";
 import CustomScrollView from "@/components/views/CustomScrollView";
+import { MAX_FULLNAME_LEN } from "@/constants/appConstants";
 import { Colors } from "@/constants/Colors";
 import { inputMode } from "@/constants/customInputModeTypes";
 import { emojiRegex } from "@/constants/regexes";
@@ -12,8 +13,6 @@ import { debounce } from "@/utils/debounce";
 import { useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
-
-const fullnameMaxLength = 30
 
 export default function SignupNameScreen() {
   const [userDetails, setUserDetails] = useState<signupDetails>({
@@ -100,7 +99,7 @@ export default function SignupNameScreen() {
   }
 
   function fullnameValid(): boolean {
-    if (userDetails.fullname && userDetails.fullname.length > fullnameMaxLength) {
+    if (userDetails.fullname && userDetails.fullname.length > MAX_FULLNAME_LEN) {
       return false
     }
 
@@ -112,8 +111,8 @@ export default function SignupNameScreen() {
   }
 
   function getFullNameFeedback(): { text: string, mode: inputMode } {
-    if (userDetails.fullname && userDetails.fullname.length > fullnameMaxLength) {
-      return { text: `cannot be greater than ${fullnameMaxLength} characters`, mode: "warn" }
+    if (userDetails.fullname && userDetails.fullname.length > MAX_FULLNAME_LEN) {
+      return { text: `cannot be greater than ${MAX_FULLNAME_LEN} characters`, mode: "warn" }
     }
 
     if (emojiRegex.test(userDetails.fullname ?? "")) {

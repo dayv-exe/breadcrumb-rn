@@ -22,13 +22,14 @@ Reanimated.addWhitelistedNativeProps({
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera)
 
 type camProps = {
-  device: CameraDevice
+  frontCam?: CameraDevice
+  backCam?: CameraDevice
 }
 
 function ControlButtonContainer({ children }: PropsWithChildren) {
   return (
     <View style={{
-      backgroundColor: "rgba(0, 0, 0, .1)",
+      backgroundColor: "rgba(0, 0, 0, 0)",
       padding: 2,
       borderRadius: "100%",
     }}>
@@ -47,11 +48,17 @@ function CrumbTypePicker() {
   )
 }
 
-function CameraScreen({ device }: camProps) {
+function CameraScreen({ frontCam, backCam }: camProps) {
+  let availableCams: CameraDevice[] = []
+
+  if (backCam !== null) availableCams.push(backCam!)
+  if (frontCam !== null) availableCams.push(frontCam!)
+
+  const [currentCam, setCurrentCam] = useState<CameraDevice>(availableCams[0])
   const progress = useSharedValue(0)
   const [isRecording, setIsRecording] = useState(false)
-  const zoom = useSharedValue(device.neutralZoom)
-  const format = useCameraFormat(device, [
+  const zoom = useSharedValue(currentCam.neutralZoom)
+  const format = useCameraFormat(currentCam, [
     { photoResolution: { width: 1920, height: 1080 } }
   ])
   const insets = useSafeAreaInsets()
@@ -79,11 +86,11 @@ function CameraScreen({ device }: camProps) {
       zoom.value = interpolate(
         z,
         [1, 15],
-        [device.minZoom, 15],
+        [currentCam.minZoom, 15],
         Extrapolation.CLAMP,
       )
     })
-    .onTouchesUp(() => {
+    .onEnd(() => {
       runOnJS(handleTouchEnd)()
     })
 
@@ -108,6 +115,11 @@ function CameraScreen({ device }: camProps) {
     )
   }
 
+  function flipCamera() {
+    if (availableCams.length < 2) return
+    setCurrentCam(currentCam === availableCams[0] ? availableCams[1] : availableCams[0])
+  }
+
   function stopRecording() {
     setIsRecording(false)
     cancelAnimation(progress)
@@ -118,35 +130,42 @@ function CameraScreen({ device }: camProps) {
   return (
     <GestureDetector gesture={gesture}>
       <SafeAreaView style={styles.cameraContainer}>
-        <ReanimatedCamera
-          enableZoomGesture
-          style={[StyleSheet.absoluteFill, { backgroundColor: "black" }]}
-          device={device}
-          isActive={true}
-          animatedProps={animatedProps}
-          audio={true}
-        />
+        <View style={styles.cameraWrapper}>
+          <ReanimatedCamera
+            enableZoomGesture
+            style={[StyleSheet.absoluteFill, { backgroundColor: "black" }]}
+            device={currentCam}
+            isActive={true}
+            animatedProps={animatedProps}
+            audio={true}
+          />
+        </View>
         {isRecording && <RecordingIndicator />}
-        {!isRecording && <View style={styles.cameraControls}>
-          <CustomImageButton type="text" src={require("../../assets/images/icons/noflash_sel_light.png")} size={25} />
-          <CustomLabel labelText="flash" textAlign="center" fontSize={12} />
-          <Spacer size="tiny" />
-          <CustomImageButton type="text" src={require("../../assets/images/icons/flipcamera_sel_light.png")} size={25} />
-        
+        {<View style={styles.cameraControls}>
+          <TouchableOpacity>
+            <CustomImageButton type="text" src={require("../../assets/images/icons/noflash_sel_light.png")} size={25} fitToContent />
+            <Spacer size="tiny" />
+
+          </TouchableOpacity>
+          <View onTouchStart={flipCamera}>
+            <Spacer />
+            <CustomImageButton type="text" src={require("../../assets/images/icons/flipcamera_sel_light.png")} size={25} fitToContent />
+            <Spacer size="tiny" />
+          </View>
         </View>}
         {!isRecording && <View style={[styles.topControls, { paddingTop: insets.top }]}>
           <ControlButtonContainer>
-            <CustomImageButton type="text" src={require("../../assets/images/icons/findfriends_sel_light.png")} size={22} handleClick={() => router.push("/find-friends")} />
+            <CustomImageButton fitToContent type="text" src={require("../../assets/images/icons/searchfriends_sel_light.png")} size={22} handleClick={() => router.push("/find-friends")} />
           </ControlButtonContainer>
           <ControlButtonContainer>
-            <CustomImageButton type="text" src={require("../../assets/images/icons/walls_sel_light.png")} size={22} handleClick={() => router.push("/create-wall")} />
+            <CustomImageButton type="text" src={require("../../assets/images/icons/walls_sel_light.png")} size={22} handleClick={() => router.push("/create-wall")} fitToContent />
           </ControlButtonContainer>
         </View>}
         {!isRecording && <View style={styles.galleryContainer}>
-          <CustomImageButton type="text" src={require("../../assets/images/icons/gallery_unsel_light.png")} size={35} />
+          <CustomImageButton type="text" src={require("../../assets/images/icons/gallery_unsel_light.png")} size={30} />
         </View>}
         <View style={styles.shutterContainer}>
-          <View style={[styles.videoShutter, { backgroundColor: isRecording ? "red" : "transparent" }]}>
+          <View style={[styles.videoShutter, { backgroundColor: isRecording ? "red" : "transparent" }]} onTouchEnd={handleTouchEnd}>
             <TouchableOpacity delayLongPress={150} onLongPress={startRecording} style={[styles.photoShutter, { borderColor: isRecording ? "transparent" : "#ccc", backgroundColor: isRecording ? "transparent" : "white" }]}>
             </TouchableOpacity>
           </View>
@@ -182,7 +201,8 @@ function NoPermissionScreen({ missingPermissions, requestPerms }: noPermProps) {
 }
 
 export default function CustomCamera() {
-  const device = useCameraDevice("back")
+  const backCam = useCameraDevice("back")
+  const frontCam = useCameraDevice("front")
   const { hasPermission: hasCamPermission, requestPermission: reqCamPermission } = useCameraPermission()
   const { hasPermission: hasMicPermission, requestPermission: reqMicPermission } = useMicrophonePermission()
 
@@ -211,12 +231,12 @@ export default function CustomCamera() {
     )
   }
 
-  if (device == null) return (
+  if (backCam == null && frontCam == null) return (
     <NoCameraFoundScreen />
   )
 
   return (
-    <CameraScreen device={device} />
+    <CameraScreen frontCam={frontCam} backCam={backCam} />
   )
 }
 
@@ -261,11 +281,13 @@ const styles = StyleSheet.create({
   },
   cameraControls: {
     position: "absolute",
-    right: 7,
-    backgroundColor: "rgba(0, 0, 0, .1)",
+    right: 5,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     borderRadius: 100,
-    paddingHorizontal: 2,
-    paddingVertical: 4
+    paddingTop: 13,
+    paddingHorizontal: 10,
+    paddingBottom: 10,
+    opacity: .9
   },
   topControls: {
     position: "absolute",
@@ -273,16 +295,26 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     flexDirection: "row",
-    top: 0,
-    paddingHorizontal: 15,
+    top: 20,
+    paddingHorizontal: 20,
   },
   galleryContainer: {
     position: "absolute",
     alignItems: "center",
     bottom: 75,
     left: 45,
-    backgroundColor: "rgba(0, 0, 0, .1)",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     padding: 5,
-    borderRadius: 100
+    borderRadius: 100,
+    opacity: .9
+  },
+  cameraWrapper: {
+    flex: 1,
+    width: "100%",
+    alignSelf: "center",
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
+    overflow: "hidden",
+    backgroundColor: "black",
   }
 })
